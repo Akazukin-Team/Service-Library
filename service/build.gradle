@@ -1,0 +1,23 @@
+plugins {
+    id 'buildlogic.java-module-conventions'
+    id 'buildlogic.java-manifest-conventions'
+    id 'buildlogic.java-maven-conventions'
+    id 'buildlogic.java-test-conventions'
+    id 'buildlogic.java-jmh-conventions'
+}
+
+dependencies {
+    api libs.akz.util
+}
+
+tasks.withType(AbstractPublishToMaven).configureEach {
+    dependsOn("jar")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}

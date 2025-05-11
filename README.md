@@ -1,8 +1,8 @@
-# <PLACEHOLDER_NAME>
+# Service Library
 
-[![Build Status](https://github.com/Akazukin-Team/<PLACEHOLDER_REPO>/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Akazukin-Team/<PLACEHOLDER_REPO>/actions/workflows/build.yml?query=branch:main)
+[![Build Status](https://github.com/Akazukin-Team/Service-Library/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Akazukin-Team/Service-Library/actions/workflows/build.yml?query=branch:main)
 
-<PLACEHOLDER_DESCRIPTION>
+A library providing manager for many similar services.
 
 ---
 
@@ -22,7 +22,7 @@
 
 ## Features
 
-- <PLACEHOLDER_FEATURES>
+- Provides manager for many similar services.
 
 ---
 
@@ -53,7 +53,7 @@ Make sure you have the following installed:
     ```xml
     <dependency>
         <groupId>org.akazukin</groupId>
-        <artifactId><PLACEHOLDER_ARTIFACT></artifactId>
+        <artifactId>service</artifactId>
         <version>VERSION</version>
     </dependency>
     ```
@@ -72,7 +72,7 @@ Make sure you have the following installed:
 
 2. Add the dependency to the `dependencies` block in your `build.gradle` file:
     ```groovy
-    implementation 'org.akazukin:<PLACEHOLDER_ARTIFACT>:<VERSION>'
+    implementation 'org.akazukin:service:<VERSION>'
     ```
 
 ---
@@ -90,8 +90,8 @@ To build the project from source, follow these steps:
 
 1. Clone the repository:
     ```shell
-    git clone https://github.com/Akazukin-Team/<PLACEHOLDER_REPO>.git
-    cd <PLACEHOLDER_REPO>
+    git clone https://github.com/Akazukin-Team/Service-Library.git
+    cd Service-Library
     ```
 
 2. Build the project with Gradle:
