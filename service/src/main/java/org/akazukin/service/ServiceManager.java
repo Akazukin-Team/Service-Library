@@ -83,7 +83,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
 
     @Override
     public <T2 extends T> void unregisterService(@NotNull final T2 serviceImpl) {
-        this.services.removeIf(h -> Objects.equals(h.getImplementation(), serviceImpl));
+        this.services.removeIf(h -> h.getImplementation() == serviceImpl);
     }
 
     @Override
