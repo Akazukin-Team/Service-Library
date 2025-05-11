@@ -19,7 +19,25 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class ServiceHolder<T extends IService> {
+    /**
+     * Represents the interface class associated with the service type managed by this holder.
+     * This field may be {@code null} if the service implementation is not explicitly associated
+     * with an interface class.
+     * Typically used to identify or retrieve services by their interface
+     * type within a service management system.
+     *
+     * @param <T> the type of the service, which must extend {@link IService}
+     */
     @Nullable Class<T> interfaceClass;
+
+    /**
+     * Represents the concrete implementation of the service managed by this holder.
+     * This field is guaranteed to be non-null and contains the actual instance of the service.
+     * It is used to access the functionality of the service, allowing operations suitable
+     * for its specific type.
+     *
+     * @param <T> the type of the service, which must extend {@link IService}
+     */
     @NotNull T implementation;
 
     @Override
