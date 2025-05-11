@@ -19,7 +19,7 @@ public interface IServiceManager<T extends IService> {
      * @return the instance of the service matching the specified interface type, or {@code null} if no service is found
      */
     @Nullable
-    <T2 extends T> T2 getServiceByInterface(Class<T2> service);
+    <T2 extends T> T2 getServiceByInterface(@NotNull Class<T2> service);
 
     /**
      * Retrieves a registered service by its specific implementation class.
@@ -29,7 +29,7 @@ public interface IServiceManager<T extends IService> {
      * @return the instance of the service matching the specified implementation class, or {@code null} if no service is found
      */
     @Nullable
-    <T2 extends T> T2 getServiceByImplementation(Class<T2> service);
+    <T2 extends T> T2 getServiceByImplementation(@NotNull Class<T2> service);
 
     /**
      * Registers a service implementation with its corresponding service interface.

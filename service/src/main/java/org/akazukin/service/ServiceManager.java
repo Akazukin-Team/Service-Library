@@ -39,7 +39,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     @SuppressWarnings("unchecked")
     public <T2 extends T> T2 getServiceByInterface(@NotNull final Class<T2> service) {
         return (T2) this.services.stream()
-                .filter(s -> s.getInterfaceClass().equals(service))
+                .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                 .findFirst()
                 .map(ServiceHolder::getImplementation)
                 .orElse(null);
@@ -50,7 +50,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     public <T2 extends T> T2 getServiceByImplementation(@NotNull final Class<T2> service) {
         return (T2) this.services.stream()
                 .map(ServiceHolder::getImplementation)
-                .filter(s -> s.getClass().equals(service))
+                .filter(s -> Objects.equals(s.getClass(), service))
                 .findFirst()
                 .orElse(null);
     }
