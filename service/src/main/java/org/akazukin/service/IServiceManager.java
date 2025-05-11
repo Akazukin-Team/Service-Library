@@ -74,4 +74,37 @@ public interface IServiceManager<T extends IService> {
      */
     @Nullable
     T getServiceById(long serviceId);
+
+    /**
+     * Unregisters a service implementation from the service manager.
+     * This method removes the specified service implementation from the managed collection of services.
+     * If the provided implementation is not currently registered, no action is taken.
+     *
+     * @param <T2>        the type of the service implementation to unregister, extending the base type {@link T}
+     * @param serviceImpl the instance of the service implementation to be unregistered;
+     *                    must not be null
+     */
+    <T2 extends T> void unregisterService(@NotNull T2 serviceImpl);
+
+    /**
+     * Unregisters a service implementation from the service manager based on its implementation class.
+     * This method removes all instances of a registered service that match the provided implementation type.
+     * If no matching implementation is registered, no action is taken.
+     *
+     * @param <T2>        the type of the service implementation to unregister, extending the base type {@link T}
+     * @param serviceImpl the class object representing the implementation type of the service to be unregistered;
+     *                    must not be null
+     */
+    <T2 extends T> void unregisterServiceByImplementation(@NotNull Class<T2> serviceImpl);
+
+    /**
+     * Unregisters a service implementation using its interface type.
+     * This method removes all instances of services associated with the specified service interface class.
+     * If no matching implementation is registered, no action is taken.
+     *
+     * @param <T2>    the type of the service interface to unregister, extending the base type {@link T}
+     * @param service the class object representing the interface of the service to be unregistered;
+     *                must not be null
+     */
+    <T2 extends T> void unregisterServiceByInterface(@NotNull Class<T2> service);
 }

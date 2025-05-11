@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -78,5 +79,20 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
                 .findFirst()
                 .map(ServiceHolder::getImplementation)
                 .orElse(null);
+    }
+
+    @Override
+    public <T2 extends T> void unregisterService(@NotNull final T2 serviceImpl) {
+        this.services.removeIf(h -> Objects.equals(h.getImplementation(), serviceImpl));
+    }
+
+    @Override
+    public <T2 extends T> void unregisterServiceByImplementation(@NotNull final Class<T2> serviceImpl) {
+        this.services.removeIf(h -> Objects.equals(h.getImplementation().getClass(), serviceImpl));
+    }
+
+    @Override
+    public <T2 extends T> void unregisterServiceByInterface(@NotNull final Class<T2> service) {
+        this.services.removeIf(h -> Objects.equals(h.getInterfaceClass(), service));
     }
 }
