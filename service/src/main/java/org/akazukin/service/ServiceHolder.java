@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -17,8 +19,8 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class ServiceHolder<T extends IService> {
-    Class<T> interfaceClass;
-    T implementation;
+    @Nullable Class<T> interfaceClass;
+    @NotNull T implementation;
 
     @Override
     public int hashCode() {

@@ -1,6 +1,6 @@
 package org.akazukin.service;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,27 +35,30 @@ public interface IServiceManager<T extends IService> {
      * Registers a service implementation with its corresponding service interface.
      * This method allows associating a service interface with a specific implementation.
      *
-     * @param <T2>        the type of the service to register, extending the base type {@link T}
-     * @param service     the class object representing the service interface, used as the key for management
-     * @param serviceImpl the implementation instance of the service to register
+     * @param <T2>        the type of the service to register, extending the base type {@link T}.
+     * @param service     the class object representing the service interface, used as the key for management.
+     *                    Must be {@code null} if the service is not associated with a specific interface.
+     * @param serviceImpl the implementation instance of the service to register.
+     *                    Must not be {@code null}.
      */
-    <T2 extends T> void registerService(Class<T2> service, T2 serviceImpl);
+    <T2 extends T> void registerService(@Nullable Class<T2> service, @NotNull T2 serviceImpl);
 
     /**
      * Registers a service implementation without associating it with a specific service interface.
      *
      * @param <T2>        the type of the service implementation being registered, extending the base type {@link T}
-     * @param serviceImpl the implementation instance of the service to be registered
+     * @param serviceImpl the implementation instance of the service to be registered.
+     *                    Must not be {@code null}.
      */
-    <T2 extends T> void registerService(T2 serviceImpl);
+    <T2 extends T> void registerService(@NotNull T2 serviceImpl);
 
     /**
      * Retrieves an array of all the registered service instances.
      *
      * @return an array of all services currently registered, or an empty array if no services are registered.
-     * Must not be {@code null}
+     * Must not be {@code null}.
      */
-    @NonNull
+    @NotNull
     T[] getAllServices();
 
     /**

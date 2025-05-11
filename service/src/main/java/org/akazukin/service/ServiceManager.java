@@ -1,10 +1,11 @@
 package org.akazukin.service;
 
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.util.annotation.ThreadSafe;
 import org.akazukin.util.utils.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,13 +30,13 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
      * @param type the class object representing the type of services to be managed;
      *             must not be null
      */
-    public ServiceManager(@NonNull final Class<T> type) {
+    public ServiceManager(@NotNull final Class<T> type) {
         this.type = type;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T2 extends T> T2 getServiceByInterface(final Class<T2> service) {
+    public <T2 extends T> T2 getServiceByInterface(@NotNull final Class<T2> service) {
         return (T2) this.services.stream()
                 .filter(s -> s.getInterfaceClass().equals(service))
                 .findFirst()
@@ -45,7 +46,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T2 extends T> T2 getServiceByImplementation(final Class<T2> service) {
+    public <T2 extends T> T2 getServiceByImplementation(@NotNull final Class<T2> service) {
         return (T2) this.services.stream()
                 .map(ServiceHolder::getImplementation)
                 .filter(s -> s.getClass().equals(service))
@@ -54,13 +55,13 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     }
 
     @Override
-    public synchronized <T2 extends T> void registerService(final Class<T2> service, final T2 serviceImpl) {
+    public synchronized <T2 extends T> void registerService(@Nullable final Class<T2> service, @NotNull final T2 serviceImpl) {
         this.services.add(new ServiceHolder<>(service, serviceImpl));
     }
 
     @Override
-    public synchronized <T2 extends T> void registerService(final T2 serviceImpl) {
-        this.services.add(new ServiceHolder<>(null, serviceImpl));
+    public <T2 extends T> void registerService(final @NotNull T2 serviceImpl) {
+        this.registerService(null, serviceImpl);
     }
 
     @Override
