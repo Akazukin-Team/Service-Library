@@ -69,7 +69,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     public T[] getAllServices() {
         return this.services.stream()
                 .map(ServiceHolder::getImplementation)
-                .toArray(size -> ArrayUtils.getNewArray(this.type, size));
+                .toArray(ArrayUtils.collectToArray(this.type));
     }
 
     @Override
