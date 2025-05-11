@@ -25,8 +25,6 @@ public final class ServiceHolder<T extends IService> {
      * with an interface class.
      * Typically used to identify or retrieve services by their interface
      * type within a service management system.
-     *
-     * @param <T> the type of the service, which must extend {@link IService}
      */
     @Nullable Class<T> interfaceClass;
 
@@ -35,8 +33,6 @@ public final class ServiceHolder<T extends IService> {
      * This field is guaranteed to be non-null and contains the actual instance of the service.
      * It is used to access the functionality of the service, allowing operations suitable
      * for its specific type.
-     *
-     * @param <T> the type of the service, which must extend {@link IService}
      */
     @NotNull T implementation;
 
