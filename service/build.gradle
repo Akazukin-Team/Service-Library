@@ -9,15 +9,3 @@ plugins {
 dependencies {
     api libs.akz.util
 }
-
-tasks.withType(AbstractPublishToMaven).configureEach {
-    dependsOn("jar")
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
-}
