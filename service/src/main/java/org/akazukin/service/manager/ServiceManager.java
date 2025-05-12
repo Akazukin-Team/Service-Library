@@ -1,7 +1,10 @@
-package org.akazukin.service;
+package org.akazukin.service.manager;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.akazukin.service.data.IService;
+import org.akazukin.service.data.IServiceHolder;
+import org.akazukin.service.data.ServiceHolder;
 import org.akazukin.util.annotation.ThreadSafe;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +22,10 @@ import java.util.Set;
  *
  * @param <T> the type of services managed, which must extend {@link IService}
  */
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public class ServiceManager<T extends IService> implements IServiceManager<T> {
-    Set<ServiceHolder<? extends T>> services = new HashSet<>();
+    Set<IServiceHolder<? extends T>> services = new HashSet<>();
     Class<T> type;
 
     /**
@@ -41,7 +44,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
         return (T2) this.services.stream()
                 .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                 .findFirst()
-                .map(ServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .orElse(null);
     }
 
@@ -49,7 +52,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     @SuppressWarnings("unchecked")
     public <T2 extends T> T2 getServiceByImplementation(@NotNull final Class<T2> service) {
         return (T2) this.services.stream()
-                .map(ServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .filter(s -> Objects.equals(s.getClass(), service))
                 .findFirst()
                 .orElse(null);
@@ -68,7 +71,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
     @Override
     public T[] getAllServices() {
         return this.services.stream()
-                .map(ServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .toArray(ArrayUtils.collectToArray(this.type));
     }
 
@@ -77,7 +80,7 @@ public class ServiceManager<T extends IService> implements IServiceManager<T> {
         return this.services.stream()
                 .filter(s -> s.getImplementation().getServiceId() == serviceId)
                 .findFirst()
-                .map(ServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .orElse(null);
     }
 
