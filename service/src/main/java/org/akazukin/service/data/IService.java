@@ -1,4 +1,4 @@
-package org.akazukin.service;
+package org.akazukin.service.data;
 
 /**
  * Represents a generic service with functionality to retrieve its unique identifier.

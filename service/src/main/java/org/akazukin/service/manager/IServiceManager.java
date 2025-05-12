@@ -1,5 +1,6 @@
-package org.akazukin.service;
+package org.akazukin.service.manager;
 
+import org.akazukin.service.data.IService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
