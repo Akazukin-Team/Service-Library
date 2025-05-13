@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
  * This interface is designed to provide type-safe access to both the interface
  * class and the implementation of a service.
  *
- * @param <T> the type of the service, which must extend {@link IService}
+ * @param <T> the type of the service
  */
-public interface IServiceHolder<T extends IService> {
+public interface IServiceHolder<T> {
     /**
      * Retrieves the interface class associated with the service type managed by the holder.
      * This method returns the class object representing the service interface,
