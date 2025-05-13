@@ -4,17 +4,34 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.service.data.CompoundServiceHolder;
 import org.akazukin.service.data.ICompoundServiceHolder;
-import org.akazukin.util.object.Pair;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * An abstract implementation of a compound service manager that manages services and their associated data.
+ * Extends the {@link AServiceManager} with additional functionalities for handling data linked with service holders.
+ *
+ * @param <U> the type of service managed by this manager.
+ * @param <V> the type of data associated with the services.
+ */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class ACompoundServiceManager<U, V>
         extends AServiceManager<ICompoundServiceHolder<? extends U, V>, U> implements ICompoundServiceManager<ICompoundServiceHolder<? extends U, V>, U, V> {
     Class<V> dataType;
 
+    /**
+     * Constructs an instance of ACompoundServiceManager, which manages compound services
+     * and their associated data types.
+     * This manager extends the capabilities of a basic service manager by allowing
+     * management of data linked with compound service holders.
+     *
+     * @param serviceType the class object representing the type of the service.
+     *                    Must not be null.
+     * @param dataType    the class object representing the type of data associated with the services.
+     */
     @SuppressWarnings("unchecked")
     public ACompoundServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
         super((Class<ICompoundServiceHolder<? extends U, V>>) (Object) CompoundServiceHolder.class, serviceType);
@@ -22,7 +39,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public <U2 extends U> V getDataByImplementation(final Class<U> service) {
+    public <U2 extends U> V getDataByImplementation(final Class<U2> service) {
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
                 .findFirst()
@@ -31,7 +48,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public <U2 extends U> V getDataByInterface(final Class<U> service) {
+    public <U2 extends U> V getDataByInterface(final Class<U2> service) {
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                 .findFirst()
@@ -40,7 +57,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public V getDataByService(final U service) {
+    public V getDataByService(final @NotNull U service) {
         return this.services.stream()
                 .filter(s -> s.getImplementation() == service)
                 .findFirst()
@@ -49,37 +66,16 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <U2 extends U> Pair<U2, V> getServiceAndDataByImplementation(final Class<U2> service) {
-        return this.services.stream()
-                .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
-                .findFirst()
-                .map(s -> new Pair<>((U2) s.getImplementation(), s.getData()))
-                .orElse(null);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <U2 extends U> Pair<U2, V> getServiceAndDataByInterface(final Class<U2> service) {
-        return this.services.stream()
-                .filter(s -> Objects.equals(s.getInterfaceClass(), service))
-                .findFirst()
-                .map(s -> new Pair<>((U2) s.getImplementation(), s.getData()))
-                .orElse(null);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Pair<U, V>[] getServicesAndData() {
-        return this.services.stream()
-                .map(s -> new Pair<>(s.getImplementation(), s.getData()))
-                .toArray(Pair[]::new);
-    }
-
-    @Override
-    public V[] getData() {
+    public V[] getAllData() {
         return this.services.stream()
                 .map(ICompoundServiceHolder::getData)
                 .toArray(ArrayUtils.collectToArray(this.dataType));
+    }
+
+    @Override
+    public ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable final V data) {
+        return this.services.stream()
+                .filter(s -> Objects.equals(s.getData(), data))
+                .toArray(ArrayUtils.collectToArray(this.serviceHolderType));
     }
 }

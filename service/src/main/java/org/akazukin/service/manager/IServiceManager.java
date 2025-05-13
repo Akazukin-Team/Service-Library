@@ -59,7 +59,7 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * Must not be {@code null}.
      */
     @NotNull
-    U[] getServices();
+    U[] getAllServices();
 
     /**
      * Unregisters a service implementation from the service manager.
@@ -100,5 +100,36 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * @return an array of all services currently registered, or an empty array if no services are registered.
      * Must not be {@code null}.
      */
-    T[] getServiceHolders();
+    @NotNull
+    T[] getAllServiceHolders();
+
+    /**
+     * Retrieves the service holder associated with the given service interface type.
+     *
+     * @param service the class object representing the interface type of the service.
+     *                Must not be null.
+     * @return the service holder matching the specified interface type, or null if no service holder is found.
+     */
+    @Nullable
+    T getServiceHolderByInterface(@NotNull Class<? extends U> service);
+
+    /**
+     * Retrieves the service holder associated with the given service implementation class.
+     *
+     * @param service the class object representing the implementation type of the service.
+     *                Must not be null.
+     * @return the service holder matching the specified implementation class, or null if no service holder is found.
+     */
+    @Nullable
+    T getServiceHolderByImplementation(@NotNull Class<? extends U> service);
+
+    /**
+     * Retrieves the service holder associated with the given service instance.
+     *
+     * @param service the instance of the service for which the service holder is to be retrieved.
+     *                Must not be null.
+     * @return the service holder matching the specified service instance, or null if no service holder is found.
+     */
+    @Nullable
+    T getServiceHolderByService(@NotNull U service);
 }
