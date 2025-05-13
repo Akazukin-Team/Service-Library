@@ -26,10 +26,11 @@ public interface IServiceHolder<T> {
     /**
      * Retrieves the concrete implementation of the service managed by the holder.
      * This method provides access to the actual service instance,
-     * which is guaranteed to be non-null
+     * which is guaranteed to be not {@code null}
      * and can be used to perform operations specific to the service type.
      *
-     * @return the non-null implementation of the service managed by the holder
+     * @return the implementation of the service managed by the holder
+     * Must not be {@code null}.
      */
     @NotNull
     T getImplementation();

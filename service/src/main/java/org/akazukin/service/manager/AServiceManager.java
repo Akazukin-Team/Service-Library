@@ -12,6 +12,14 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * A base abstract class that provides the implementation of a service management system.
+ * It enables registering, unregistering, and retrieving services by their interface,
+ * implementation, or holders.
+ *
+ * @param <T> The type of the service holder, which extends {@link IServiceHolder}.
+ * @param <U> The type of the service object managed by this service manager.
+ */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> implements IServiceManager<T, U> {
@@ -22,6 +30,14 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
     Class<T> serviceHolderType;
     Class<U> serviceType;
 
+    /**
+     * Constructs an instance of AServiceManager with the specified service holder type and service type.
+     *
+     * @param serviceHolderType the class object representing the type of the service holder.
+     *                          Must not be null.
+     * @param serviceType       the class object representing the type of the service.
+     *                          Must not be null.
+     */
     public AServiceManager(@NotNull final Class<T> serviceHolderType, @NotNull final Class<U> serviceType) {
         this.serviceHolderType = serviceHolderType;
         this.serviceType = serviceType;
@@ -69,7 +85,7 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
 
     @Override
     @SuppressWarnings("unused")
-    public U[] getServices() {
+    public U[] getAllServices() {
         return this.services.stream()
                 .map(IServiceHolder::getImplementation)
                 .toArray(ArrayUtils.collectToArray(this.serviceType));
@@ -91,9 +107,45 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
     }
 
     @Override
-    public T[] getServiceHolders() {
+    public T[] getAllServiceHolders() {
         return this.services.toArray(ArrayUtils.getNewArray(this.serviceHolderType, 0));
     }
 
-    protected abstract @NotNull <U2 extends U> T createServiceHolder(final @Nullable Class<U2> service, final @NotNull U2 serviceImpl);
+    @Override
+    public T getServiceHolderByInterface(@NotNull final Class<? extends U> service) {
+        return this.services.stream()
+                .filter(s -> Objects.equals(s.getInterfaceClass(), service))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public T getServiceHolderByImplementation(@NotNull final Class<? extends U> service) {
+        return this.services.stream()
+                .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public T getServiceHolderByService(@NotNull final U service) {
+        return this.services.stream()
+                .filter(s -> s.getImplementation() == service)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Creates a service holder for the specified service interface or implementation.
+     *
+     * @param <U2>        The type of the service, which must extend {@link U}.
+     * @param service     The class object representing the service's interface or implementation.
+     *                    Can be {@code null} if there is no associated interface.
+     * @param serviceImpl The instance of the service implementation.
+     *                    Must not be {@code null}.
+     * @return A newly created service holder of type {@link T}.
+     * Must not be {@code null}.
+     */
+    @NotNull
+    protected abstract <U2 extends U> T createServiceHolder(final @Nullable Class<U2> service, final @NotNull U2 serviceImpl);
 }
