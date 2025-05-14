@@ -39,7 +39,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public <U2 extends U> V getDataByImplementation(final Class<U2> service) {
+    public V getDataByImplementation(final Class<? extends U> service) {
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
                 .findFirst()
@@ -48,7 +48,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public <U2 extends U> V getDataByInterface(final Class<U2> service) {
+    public V getDataByInterface(final Class<? extends U> service) {
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                 .findFirst()

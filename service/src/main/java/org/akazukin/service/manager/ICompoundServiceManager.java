@@ -17,20 +17,18 @@ public interface ICompoundServiceManager<T extends ICompoundServiceHolder<? exte
      *
      * @param service the class of the service implementation for which associated data is to be retrieved.
      *                Must not be null.
-     * @param <U2>    the implementation type of the service, which extends U.
      * @return the data associated with the given service implementation class, or null if no data is associated.
      */
-    <U2 extends U> V getDataByImplementation(Class<U2> service);
+    V getDataByImplementation(Class<? extends U> service);
 
     /**
      * Retrieves data associated with the specified service interface.
      *
      * @param service the service interface class whose associated data is to be retrieved.
      *                Must not be {@code null}.
-     * @param <U2>    the implementation type of the service, which extends U.
      * @return the data associated with the given service interface, or {@code null} if no data is associated.
      */
-    <U2 extends U> V getDataByInterface(Class<U2> service);
+    V getDataByInterface(Class<? extends U> service);
 
     /**
      * Retrieves data associated with the specified service.

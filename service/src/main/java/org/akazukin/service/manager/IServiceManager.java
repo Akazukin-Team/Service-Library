@@ -66,33 +66,30 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * This method removes the specified service implementation from the managed collection of services.
      * If the provided implementation is not currently registered, no action is taken.
      *
-     * @param <U2>        the type of the service implementation to unregister, extending the base type {@link U}
      * @param serviceImpl the instance of the service implementation to be unregistered;
      *                    must not be null
      */
-    <U2 extends U> void unregisterService(@NotNull U2 serviceImpl);
+    void unregisterService(@NotNull U serviceImpl);
 
     /**
      * Unregisters a service implementation from the service manager based on its implementation class.
      * This method removes all instances of a registered service that match the provided implementation type.
      * If no matching implementation is registered, no action is taken.
      *
-     * @param <U2>        the type of the service implementation to unregister, extending the base type {@link U}
      * @param serviceImpl the class object representing the implementation type of the service to be unregistered;
      *                    must not be null
      */
-    <U2 extends U> void unregisterServiceByImplementation(@NotNull Class<U2> serviceImpl);
+    void unregisterServiceByImplementation(@NotNull Class<? extends U> serviceImpl);
 
     /**
      * Unregisters a service implementation using its interface type.
      * This method removes all instances of services associated with the specified service interface class.
      * If no matching implementation is registered, no action is taken.
      *
-     * @param <U2>    the type of the service interface to unregister, extending the base type {@link U}
      * @param service the class object representing the interface of the service to be unregistered;
      *                must not be null
      */
-    <U2 extends U> void unregisterServiceByInterface(@NotNull Class<U2> service);
+    void unregisterServiceByInterface(@NotNull Class<? extends U> service);
 
     /**
      * Retrieves an array of all service holders that the registered service.
