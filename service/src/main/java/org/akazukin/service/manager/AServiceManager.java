@@ -92,17 +92,17 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
     }
 
     @Override
-    public <U2 extends U> void unregisterService(@NotNull final U2 serviceImpl) {
+    public void unregisterService(@NotNull final U serviceImpl) {
         this.services.removeIf(h -> h.getImplementation() == serviceImpl);
     }
 
     @Override
-    public <U2 extends U> void unregisterServiceByImplementation(@NotNull final Class<U2> serviceImpl) {
+    public void unregisterServiceByImplementation(@NotNull final Class<? extends U> serviceImpl) {
         this.services.removeIf(h -> Objects.equals(h.getImplementation().getClass(), serviceImpl));
     }
 
     @Override
-    public <U2 extends U> void unregisterServiceByInterface(@NotNull final Class<U2> service) {
+    public void unregisterServiceByInterface(@NotNull final Class<? extends U> service) {
         this.services.removeIf(h -> Objects.equals(h.getInterfaceClass(), service));
     }
 
