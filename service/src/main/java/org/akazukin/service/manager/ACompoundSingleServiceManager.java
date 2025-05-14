@@ -3,7 +3,7 @@ package org.akazukin.service.manager;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
-import org.akazukin.service.data.ICompoundServiceHolder;
+import org.akazukin.service.data.ICompoundSingleServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +21,8 @@ import java.util.Objects;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<? extends U, V>, U, V>
-        extends AServiceManager<T, U> implements ICompoundServiceManager<T, U, V> {
+public abstract class ACompoundSingleServiceManager<T extends ICompoundSingleServiceHolder<? extends U, V>, U, V>
+        extends ASingleServiceManager<T, U> implements ICompoundSingleServiceManager<T, U, V> {
     Class<V> dataType;
 
     /**
@@ -37,7 +37,7 @@ public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<?
      *                          Must not be null.
      * @param dataType          the class object representing the type of data associated with the services.
      */
-    public ACompoundServiceManager(@NotNull final Class<T> serviceHolderType, final @NotNull Class<U> serviceType, final Class<V> dataType) {
+    public ACompoundSingleServiceManager(@NotNull final Class<T> serviceHolderType, final @NotNull Class<U> serviceType, final Class<V> dataType) {
         super(serviceHolderType, serviceType);
         this.dataType = dataType;
     }
@@ -47,7 +47,7 @@ public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<?
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
                 .findFirst()
-                .map(ICompoundServiceHolder::getData)
+                .map(ICompoundSingleServiceHolder::getData)
                 .orElse(null);
     }
 
@@ -56,14 +56,14 @@ public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<?
         return this.services.stream()
                 .filter(s -> s.getImplementation() == service)
                 .findFirst()
-                .map(ICompoundServiceHolder::getData)
+                .map(ICompoundSingleServiceHolder::getData)
                 .orElse(null);
     }
 
     @Override
     public V[] getAllData() {
         return this.services.stream()
-                .map(ICompoundServiceHolder::getData)
+                .map(ICompoundSingleServiceHolder::getData)
                 .toArray(ArrayUtils.collectToArray(this.dataType));
     }
 
@@ -72,14 +72,5 @@ public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<?
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getData(), data))
                 .toArray(ArrayUtils.collectToArray(this.serviceHolderType));
-    }
-
-    @Override
-    public V getDataByInterface(final Class<? extends U> service) {
-        return this.services.stream()
-                .filter(s -> Objects.equals(s.getInterfaceClass(), service))
-                .findFirst()
-                .map(ICompoundServiceHolder::getData)
-                .orElse(null);
     }
 }
