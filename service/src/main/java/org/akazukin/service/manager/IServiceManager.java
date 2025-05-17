@@ -5,54 +5,86 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Defines the contract for managing a collection of services.
- * This interface provides methods for registering, retrieving, and interacting with services by their types,
- * implementations, or unique identifiers.
+ * Interface defining management operations for service holders.
  *
- * @param <U> the type of services managed
+ * @param <T> the type of service holder being managed, which must extend {@link IServiceHolder}.
+ * @param <U> the type of the service managed by the service holder.
  */
-public interface IServiceManager<T extends IServiceHolder<? extends U>, U> extends ISingleServiceManager<T, U> {
+public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
     /**
-     * Retrieves a service instance based on its interface type.
+     * Retrieves a registered service by its specific implementation class.
      *
-     * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
-     * @param service the class object representing the interface of the service to be retrieved
-     * @return the instance of the service matching the specified interface type, or {@code null} if no service is found
+     * @param <U2>    the type of the service being retrieved, which must extend {@link U}
+     * @param service the class object representing the implementation of the service to be retrieved
+     * @return the instance of the service matching the specified implementation class, or {@code null} if no service is found
      */
     @Nullable
-    <U2 extends U> U2 getServiceByInterface(@NotNull Class<U2> service);
+    <U2 extends U> U2 getServiceByImplementation(@NotNull Class<U2> service);
 
     /**
-     * Registers a service implementation with its corresponding service interface.
-     * This method allows associating a service interface with a specific implementation.
+     * Registers a service implementation.
      *
-     * @param <U2>        the type of the service to register, extending the base type {@link U}.
-     * @param service     the class object representing the service interface, used as the key for management.
-     *                    Must be {@code null} if the service is not associated with a specific interface.
-     * @param serviceImpl the implementation instance of the service to register.
+     * @param serviceImpl the implementation instance of the service to be registered.
      *                    Must not be {@code null}.
-     * @throws IllegalStateException if the service is not null and already registered
-     *                               or
+     * @throws IllegalStateException if the class of service implementation is already registered.
      */
-    <U2 extends U> void registerService(@Nullable Class<U2> service, @NotNull U2 serviceImpl);
+    void registerService(@NotNull U serviceImpl);
 
     /**
-     * Unregisters a service implementation using its interface type.
-     * This method removes all instances of services associated with the specified service interface class.
+     * Retrieves an array of all the registered service instances.
+     *
+     * @return an array of all services currently registered, or an empty array if no services are registered.
+     * Must not be {@code null}.
+     */
+    @NotNull
+    U[] getAllServices();
+
+    /**
+     * Unregisters a service implementation from the service manager.
+     * This method removes the specified service implementation from the managed collection of services.
+     * If the provided implementation is not currently registered, no action is taken.
+     *
+     * @param serviceImpl the instance of the service implementation to be unregistered;
+     *                    must not be null.
+     */
+    void unregisterService(@NotNull U serviceImpl);
+
+    /**
+     * Unregisters a service implementation from the service manager based on its implementation class.
+     * This method removes all instances of a registered service that match the provided implementation type.
      * If no matching implementation is registered, no action is taken.
      *
-     * @param service the class object representing the interface of the service to be unregistered;
-     *                must not be null
+     * @param serviceImpl the class object representing the implementation type of the service to be unregistered;
+     *                    must not be null.
      */
-    void unregisterServiceByInterface(@NotNull Class<? extends U> service);
+    void unregisterServiceByImplementation(@NotNull Class<? extends U> serviceImpl);
 
     /**
-     * Retrieves the service holder associated with the given service interface type.
+     * Retrieves an array of all service holders that the registered service.
      *
-     * @param service the class object representing the interface type of the service.
+     * @return an array of all services currently registered, or an empty array if no services are registered.
+     * Must not be {@code null}.
+     */
+    @NotNull
+    T[] getAllServiceHolders();
+
+    /**
+     * Retrieves the service holder associated with the given service implementation class.
+     *
+     * @param service the class object representing the implementation type of the service.
      *                Must not be null.
-     * @return the service holder matching the specified interface type, or null if no service holder is found.
+     * @return the service holder matching the specified implementation class, or null if no service holder is found.
      */
     @Nullable
-    T getServiceHolderByInterface(@NotNull Class<? extends U> service);
+    T getServiceHolderByImplementation(@NotNull Class<? extends U> service);
+
+    /**
+     * Retrieves the service holder associated with the given service instance.
+     *
+     * @param service the instance of the service for which the service holder is to be retrieved.
+     *                Must not be null.
+     * @return the service holder matching the specified service instance, or null if no service holder is found.
+     */
+    @Nullable
+    T getServiceHolderByService(@NotNull U service);
 }
