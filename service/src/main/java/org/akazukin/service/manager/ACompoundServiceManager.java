@@ -12,7 +12,7 @@ import java.util.Objects;
 
 /**
  * An abstract implementation of a compound service manager that manages services and their associated data.
- * Extends the {@link AServiceManager} with additional functionalities for handling data linked with service holders.
+ * Extends the {@link ABlueprintedServiceManager} with additional functionalities for handling data linked with service holders.
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
@@ -22,7 +22,7 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<? extends U, V>, U, V>
-        extends AServiceManager<T, U> implements ICompoundServiceManager<T, U, V> {
+        extends ASingleServiceManager<T, U> implements ICompoundServiceManager<T, U, V> {
     Class<V> dataType;
 
     /**
@@ -72,14 +72,5 @@ public abstract class ACompoundServiceManager<T extends ICompoundServiceHolder<?
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getData(), data))
                 .toArray(ArrayUtils.collectToArray(this.serviceHolderType));
-    }
-
-    @Override
-    public V getDataByInterface(final Class<? extends U> service) {
-        return this.services.stream()
-                .filter(s -> Objects.equals(s.getInterfaceClass(), service))
-                .findFirst()
-                .map(ICompoundServiceHolder::getData)
-                .orElse(null);
     }
 }

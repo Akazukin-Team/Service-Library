@@ -3,7 +3,7 @@ package org.akazukin.service.manager;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
-import org.akazukin.service.data.ISingleServiceHolder;
+import org.akazukin.service.data.IServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,12 +18,12 @@ import java.util.Set;
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
- * @param <T> The type of the service holder, which extends {@link org.akazukin.service.data.IServiceHolder}.
+ * @param <T> The type of the service holder, which extends {@link org.akazukin.service.data.IBlueprintedServiceHolder}.
  * @param <U> The type of the service object managed by this service manager.
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ASingleServiceManager<T extends ISingleServiceHolder<? extends U>, U> implements ISingleServiceManager<T, U> {
+public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U>, U> implements IServiceManager<T, U> {
     public static final String EXCE_IMPL_REGISTERED = "The service is already registered; Implementation:";
 
     Set<T> services = new HashSet<>();
@@ -47,7 +47,7 @@ public abstract class ASingleServiceManager<T extends ISingleServiceHolder<? ext
     @SuppressWarnings("unchecked")
     public <U2 extends U> U2 getServiceByImplementation(@NotNull final Class<U2> service) {
         return (U2) this.services.stream()
-                .map(ISingleServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .filter(s -> Objects.equals(s.getClass(), service))
                 .findFirst()
                 .orElse(null);
@@ -66,7 +66,7 @@ public abstract class ASingleServiceManager<T extends ISingleServiceHolder<? ext
     @SuppressWarnings("unused")
     public U[] getAllServices() {
         return this.services.stream()
-                .map(ISingleServiceHolder::getImplementation)
+                .map(IServiceHolder::getImplementation)
                 .toArray(ArrayUtils.collectToArray(this.serviceType));
     }
 

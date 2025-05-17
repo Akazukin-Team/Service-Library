@@ -3,7 +3,7 @@ package org.akazukin.service.manager;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
-import org.akazukin.service.data.IServiceHolder;
+import org.akazukin.service.data.IBlueprintedServiceHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,12 +16,12 @@ import java.util.Objects;
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
- * @param <T> The type of the service holder, which extends {@link IServiceHolder}.
+ * @param <T> The type of the service holder, which extends {@link org.akazukin.service.data.IBlueprintedServiceHolder}.
  * @param <U> The type of the service object managed by this service manager.
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> extends ASingleServiceManager<T, U> implements IServiceManager<T, U> {
+public abstract class ABlueprintedServiceManager<T extends IBlueprintedServiceHolder<? extends U>, U> extends ASingleServiceManager<T, U> implements IBlueprintedServiceManager<T, U> {
     public static final String EXCE_INTERFACE_REGISTERED = "An service that associated is already registered; Interface:";
 
     /**
@@ -32,7 +32,7 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
      * @param serviceType       the class object representing the type of the service.
      *                          Must not be null.
      */
-    public AServiceManager(@NotNull final Class<T> serviceHolderType, @NotNull final Class<U> serviceType) {
+    public ABlueprintedServiceManager(@NotNull final Class<T> serviceHolderType, @NotNull final Class<U> serviceType) {
         super(serviceHolderType, serviceType);
     }
 
@@ -62,7 +62,7 @@ public abstract class AServiceManager<T extends IServiceHolder<? extends U>, U> 
         return (U2) this.services.stream()
                 .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                 .findFirst()
-                .map(IServiceHolder::getImplementation)
+                .map(IBlueprintedServiceHolder::getImplementation)
                 .orElse(null);
     }
 
