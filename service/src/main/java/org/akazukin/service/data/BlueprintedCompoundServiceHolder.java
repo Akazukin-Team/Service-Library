@@ -3,8 +3,11 @@ package org.akazukin.service.data;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -16,13 +19,19 @@ import java.util.Objects;
  * @param <T> the type of the service
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-public final class ServiceHolder<T> implements IServiceHolder<T> {
-    @NotNull T implementation;
+public class BlueprintedCompoundServiceHolder<T, U> implements IBlueprintedCompoundServiceHolder<T, U> {
+    @Nullable
+    final Class<T> interfaceClass;
+    @NotNull
+    final T implementation;
+    @Setter
+    @Nullable U data;
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.implementation.getClass());
+        return Objects.hashCode(this.interfaceClass);
     }
 }
