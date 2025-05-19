@@ -1,9 +1,9 @@
 package org.akazukin.service.manager;
 
 import org.akazukin.annotation.marker.ThreadSafe;
+import org.akazukin.service.data.BlueprintedServiceHolder;
 import org.akazukin.service.data.IBlueprintedServiceHolder;
 import org.akazukin.service.data.IServiceHolder;
-import org.akazukin.service.data.BlueprintedServiceHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +28,7 @@ public class ServiceManager<T> extends ASingleServiceManager<IServiceHolder<? ex
     }
 
     @Override
-    protected <T2 extends T> @NotNull IBlueprintedServiceHolder<? extends T> createServiceHolder(@NotNull final T2 serviceImpl) {
+    protected @NotNull IBlueprintedServiceHolder<? extends T> createServiceHolder(@NotNull final T serviceImpl) {
         return new BlueprintedServiceHolder<>(null, serviceImpl);
     }
 }
