@@ -104,12 +104,11 @@ public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U
     /**
      * Creates a service holder for the specified service interface or implementation.
      *
-     * @param <U2>        The type of the service, which must extend {@link U}.
      * @param serviceImpl The instance of the service implementation.
      *                    Must not be {@code null}.
      * @return A newly created service holder of type {@link T}.
      * Must not be {@code null}.
      */
     @NotNull
-    protected abstract <U2 extends U> T createServiceHolder(final @NotNull U2 serviceImpl);
+    protected abstract T createServiceHolder(final @NotNull U serviceImpl);
 }

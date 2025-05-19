@@ -38,7 +38,7 @@ public abstract class ABlueprintedServiceManager<T extends IBlueprintedServiceHo
 
     @Override
     @NotNull
-    protected <U2 extends U> T createServiceHolder(@NotNull final U2 serviceImpl) {
+    protected T createServiceHolder(@NotNull final U serviceImpl) {
         return this.createServiceHolder(null, serviceImpl);
     }
 
