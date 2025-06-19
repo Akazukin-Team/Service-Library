@@ -3,8 +3,6 @@ import java.time.ZonedDateTime
 
 plugins {
     id 'java-library'
-
-    id 'buildlogic.java-common-conventions'
 }
 
 Properties props = new Properties()
