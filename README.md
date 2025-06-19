@@ -4,6 +4,7 @@
 
 A library providing manager for many similar services.
 
+
 ---
 
 ## Table of Contents
@@ -45,7 +46,7 @@ Make sure you have the following installed:
     <repository>
         <id>akazukin-repo</id>
         <name>Akazukin Repository</name>
-        <url>https://maven.akazukin.org/refer/maven-public/</url>
+        <url>https://maven.akazukin.org/refer/maven-public-libraries/</url>
     </repository>
     ```
 
@@ -66,7 +67,7 @@ Make sure you have the following installed:
     ```groovy
     maven {
         name = 'Akazukin Repository'
-        url = 'https://maven.akazukin.org/refer/maven-public/'
+        url = 'https://maven.akazukin.org/refer/maven-public-libraries/'
     }
     ```
 
@@ -81,6 +82,7 @@ Make sure you have the following installed:
 
 Please read the [Contribution Guide](./.github/CONTRIBUTING.md) carefully and follow the coding conventions and
 guidelines when making your changes.
+
 
 ---
 
@@ -113,11 +115,13 @@ To build the project from source, follow these steps:
 This project uses GitHub Actions for Continuous Integration (CI).
 Every push to the `main` branch automatically triggers the build and test workflow.
 
+
 ---
 
 ## License
 
 This project is licensed under the terms described in the [License](LICENSE) file.
+
 
 ---
 
@@ -125,5 +129,6 @@ This project is licensed under the terms described in the [License](LICENSE) fil
 
 If you need further assistance or wish to contact us directly,
 please refer to the [Support](./.github/SUPPORT.md) page.
+
 
 ---
