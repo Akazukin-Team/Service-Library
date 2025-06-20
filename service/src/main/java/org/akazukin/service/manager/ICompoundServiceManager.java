@@ -7,11 +7,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface defining management operations for compound service holders and associated data.
  *
- * @param <T> the type of service holder being managed, which must extend {@link ICompoundServiceHolder}.
  * @param <U> the type of the service managed by the service holder.
  * @param <V> the type of data associated with the service holder.
  */
-public interface ICompoundServiceManager<T extends ICompoundServiceHolder<? extends U, V>, U, V> extends IServiceManager<T, U> {
+public interface ICompoundServiceManager<U, V> extends IServiceManager<U> {
     /**
      * Retrieves data associated with the given service implementation class.
      *
@@ -47,5 +46,5 @@ public interface ICompoundServiceManager<T extends ICompoundServiceHolder<? exte
      * The returned array is never {@code null} but may be empty if no matching service holders are found.
      */
     @NotNull
-    T[] getServiceHolderByData(@Nullable V data);
+    ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable V data);
 }

@@ -9,10 +9,9 @@ import org.jetbrains.annotations.Nullable;
  * This interface provides methods for registering, retrieving, and interacting with services by their types,
  * implementations, or unique identifiers.
  *
- * @param <T> the type of service holder being managed, which must extend {@link IBlueprintedServiceHolder}.
  * @param <U> the type of services managed
  */
-public interface IBlueprintedServiceManager<T extends IBlueprintedServiceHolder<? extends U>, U> extends IServiceManager<T, U> {
+public interface IBlueprintedServiceManager<U> extends IServiceManager<U> {
     /**
      * Retrieves a service instance based on its interface type.
      *
@@ -29,13 +28,13 @@ public interface IBlueprintedServiceManager<T extends IBlueprintedServiceHolder<
      *
      * @param <U2>        the type of the service to register, extending the base type {@link U}.
      * @param service     the class object representing the service interface, used as the key for management.
-     *                    Must be {@code null} if the service is not associated with a specific interface.
+     *                    Must not be {@code null}.
      * @param serviceImpl the implementation instance of the service to register.
      *                    Must not be {@code null}.
      * @throws IllegalStateException if the service is not null and already registered
      *                               or
      */
-    <U2 extends U> void registerService(@Nullable Class<U2> service, @NotNull U2 serviceImpl);
+    <U2 extends U> void registerService(@NotNull Class<U2> service, @NotNull U2 serviceImpl);
 
     /**
      * Unregisters a service implementation using its interface type.
@@ -51,9 +50,9 @@ public interface IBlueprintedServiceManager<T extends IBlueprintedServiceHolder<
      * Retrieves the service holder associated with the given service interface type.
      *
      * @param service the class object representing the interface type of the service.
-     *                Must not be null.
+     *                Must not be {@code null}.
      * @return the service holder matching the specified interface type, or null if no service holder is found.
      */
     @Nullable
-    T getServiceHolderByInterface(@NotNull Class<? extends U> service);
+    IBlueprintedServiceHolder<? extends U> getServiceHolderByInterface(@NotNull Class<? extends U> service);
 }

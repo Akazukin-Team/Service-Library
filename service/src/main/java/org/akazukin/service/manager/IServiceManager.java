@@ -7,10 +7,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface defining management operations for service holders.
  *
- * @param <T> the type of service holder being managed, which must extend {@link IServiceHolder}.
  * @param <U> the type of the service managed by the service holder.
  */
-public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
+public interface IServiceManager<U> {
     /**
      * Retrieves a registered service by its specific implementation class.
      *
@@ -66,7 +65,7 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * Must not be {@code null}.
      */
     @NotNull
-    T[] getAllServiceHolders();
+    IServiceHolder<? extends U>[] getAllServiceHolders();
 
     /**
      * Retrieves the service holder associated with the given service implementation class.
@@ -76,7 +75,7 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * @return the service holder matching the specified implementation class, or null if no service holder is found.
      */
     @Nullable
-    T getServiceHolderByImplementation(@NotNull Class<? extends U> service);
+    IServiceHolder<? extends U> getServiceHolderByImplementation(@NotNull Class<? extends U> service);
 
     /**
      * Retrieves the service holder associated with the given service instance.
@@ -86,5 +85,5 @@ public interface IServiceManager<T extends IServiceHolder<? extends U>, U> {
      * @return the service holder matching the specified service instance, or null if no service holder is found.
      */
     @Nullable
-    T getServiceHolderByService(@NotNull U service);
+    IServiceHolder<? extends U> getServiceHolderByService(@NotNull U service);
 }

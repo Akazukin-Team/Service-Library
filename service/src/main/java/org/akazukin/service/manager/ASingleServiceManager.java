@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.IServiceHolder;
+import org.akazukin.service.data.ServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,28 +19,23 @@ import java.util.Set;
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
- * @param <T> The type of the service holder, which extends {@link org.akazukin.service.data.IBlueprintedServiceHolder}.
  * @param <U> The type of the service object managed by this service manager.
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U>, U> implements IServiceManager<T, U> {
+public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
     public static final String EXCE_IMPL_REGISTERED = "The service is already registered; Implementation:";
 
-    Set<T> services = new HashSet<>();
-    Class<T> serviceHolderType;
+    Set<IServiceHolder<? extends U>> services = new HashSet<>();
     Class<U> serviceType;
 
     /**
      * Constructs an instance of AServiceManager with the specified service holder type and service type.
      *
-     * @param serviceHolderType the class object representing the type of the service holder.
-     *                          Must not be null.
-     * @param serviceType       the class object representing the type of the service.
-     *                          Must not be null.
+     * @param serviceType the class object representing the type of the service.
+     *                    Must not be null.
      */
-    public ASingleServiceManager(@NotNull final Class<T> serviceHolderType, @NotNull final Class<U> serviceType) {
-        this.serviceHolderType = serviceHolderType;
+    public ASingleServiceManager(@NotNull final Class<U> serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -81,12 +77,13 @@ public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U
     }
 
     @Override
-    public T[] getAllServiceHolders() {
-        return this.services.toArray(ArrayUtils.getNewArray(this.serviceHolderType, 0));
+    @SuppressWarnings("unchecked")
+    public IServiceHolder<? extends U>[] getAllServiceHolders() {
+        return this.services.toArray(ArrayUtils.getNewArray((Class<IServiceHolder<? extends U>>) (Object) IServiceHolder.class, 0));
     }
 
     @Override
-    public T getServiceHolderByImplementation(@NotNull final Class<? extends U> service) {
+    public IServiceHolder<? extends U> getServiceHolderByImplementation(@NotNull final Class<? extends U> service) {
         return this.services.stream()
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
                 .findFirst()
@@ -94,7 +91,7 @@ public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U
     }
 
     @Override
-    public T getServiceHolderByService(@NotNull final U service) {
+    public IServiceHolder<? extends U> getServiceHolderByService(@NotNull final U service) {
         return this.services.stream()
                 .filter(s -> s.getImplementation() == service)
                 .findFirst()
@@ -106,9 +103,11 @@ public abstract class ASingleServiceManager<T extends IServiceHolder<? extends U
      *
      * @param serviceImpl The instance of the service implementation.
      *                    Must not be {@code null}.
-     * @return A newly created service holder of type {@link T}.
+     * @return A newly created service holder.
      * Must not be {@code null}.
      */
     @NotNull
-    protected abstract T createServiceHolder(final @NotNull U serviceImpl);
+    protected IServiceHolder<? extends U> createServiceHolder(final @NotNull U serviceImpl) {
+        return new ServiceHolder<>(serviceImpl);
+    }
 }
