@@ -35,7 +35,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
      * @param serviceType the class object representing the type of the service.
      *                    Must not be null.
      */
-    public ASingleServiceManager(@NotNull final Class<U> serviceType) {
+    protected ASingleServiceManager(@NotNull final Class<U> serviceType) {
         this.serviceType = serviceType;
     }
 

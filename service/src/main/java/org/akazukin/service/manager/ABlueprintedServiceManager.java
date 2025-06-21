@@ -1,7 +1,5 @@
 package org.akazukin.service.manager;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.BlueprintedServiceHolder;
 import org.akazukin.service.data.IBlueprintedServiceHolder;
@@ -19,7 +17,6 @@ import java.util.Objects;
  *
  * @param <U> The type of the service object managed by this service manager.
  */
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManager<U> implements IBlueprintedServiceManager<U> {
     public static final String EXCE_INTERFACE_REGISTERED = "An service that associated is already registered; Interface:";

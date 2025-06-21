@@ -35,7 +35,7 @@ public abstract class ACompoundServiceManager<U, V>
      *                    Must not be null.
      * @param dataType    the class object representing the type of data associated with the services.
      */
-    public ACompoundServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
+    protected ACompoundServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
         super(serviceType);
         this.dataType = dataType;
     }
