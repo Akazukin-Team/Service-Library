@@ -20,7 +20,7 @@ public interface IBlueprintedServiceManager<U> extends IServiceManager<U> {
      * @return the instance of the service matching the specified interface type, or {@code null} if no service is found
      */
     @Nullable
-    <U2 extends U> U2 getServiceByInterface(@NotNull Class<U2> service);
+    <U2 extends U> U2 getServiceByInterfaceClass(@NotNull Class<U2> service);
 
     /**
      * Registers a service implementation with its corresponding service interface.
@@ -44,7 +44,7 @@ public interface IBlueprintedServiceManager<U> extends IServiceManager<U> {
      * @param service the class object representing the interface of the service to be unregistered;
      *                must not be null
      */
-    void unregisterServiceByInterface(@NotNull Class<? extends U> service);
+    void unregisterServiceByInterfaceClass(@NotNull Class<? extends U> service);
 
     /**
      * Retrieves the service holder associated with the given service interface type.
@@ -54,5 +54,5 @@ public interface IBlueprintedServiceManager<U> extends IServiceManager<U> {
      * @return the service holder matching the specified interface type, or null if no service holder is found.
      */
     @Nullable
-    IBlueprintedServiceHolder<? extends U> getServiceHolderByInterface(@NotNull Class<? extends U> service);
+    IBlueprintedServiceHolder<? extends U> getHolderByInterfaceClass(@NotNull Class<? extends U> service);
 }

@@ -34,7 +34,7 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U2 extends U> U2 getServiceByInterface(@NotNull final Class<U2> service) {
+    public <U2 extends U> U2 getServiceByInterfaceClass(@NotNull final Class<U2> service) {
         final Optional<U2> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -51,7 +51,7 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
         synchronized (this.subManagers) {
             for (final IServiceManager<U> subManager : this.subManagers) {
                 if (subManager instanceof IBlueprintedServiceManager) {
-                    final U2 subService = ((IBlueprintedServiceManager<U>) subManager).getServiceByInterface(service);
+                    final U2 subService = ((IBlueprintedServiceManager<U>) subManager).getServiceByInterfaceClass(service);
                     if (subService != null) {
                         return subService;
                     }
@@ -72,7 +72,7 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
                 .anyMatch(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl.getClass()))) {
             throw new IllegalStateException(ASingleServiceManager.EXCE_IMPL_REGISTERED + serviceImpl.getClass().getName());
         }
-        this.services.add(this.createServiceHolder(service, serviceImpl));
+        this.services.add(this.createHolder(service, serviceImpl));
     }
 
     /**
@@ -87,18 +87,18 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
      * Must not be {@code null}.
      */
     @NotNull
-    protected <U2 extends U> IBlueprintedServiceHolder<U2> createServiceHolder(final @NotNull Class<U2> service, final @NotNull U2 serviceImpl) {
+    protected <U2 extends U> IBlueprintedServiceHolder<U2> createHolder(final @NotNull Class<U2> service, final @NotNull U2 serviceImpl) {
         return new BlueprintedServiceHolder<>(service, serviceImpl);
     }
 
     @Override
-    public void unregisterServiceByInterface(@NotNull final Class<? extends U> service) {
+    public void unregisterServiceByInterfaceClass(@NotNull final Class<? extends U> service) {
         this.services.removeIf(h -> h instanceof IBlueprintedServiceHolder
                 && Objects.equals(((IBlueprintedServiceHolder<? extends U>) h).getInterfaceClass(), service));
     }
 
     @Override
-    public IBlueprintedServiceHolder<? extends U> getServiceHolderByInterface(@NotNull final Class<? extends U> service) {
+    public IBlueprintedServiceHolder<? extends U> getHolderByInterfaceClass(@NotNull final Class<? extends U> service) {
         final Optional<IBlueprintedServiceHolder<? extends U>> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -114,7 +114,7 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
         synchronized (this.subManagers) {
             for (final IServiceManager<U> subManager : this.subManagers) {
                 if (subManager instanceof IBlueprintedServiceManager) {
-                    final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedServiceManager<U>) subManager).getServiceHolderByInterface(service);
+                    final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedServiceManager<U>) subManager).getHolderByInterfaceClass(service);
                     if (subService != null) {
                         return subService;
                     }

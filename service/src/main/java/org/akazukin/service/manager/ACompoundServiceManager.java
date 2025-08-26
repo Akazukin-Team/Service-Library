@@ -46,7 +46,7 @@ public abstract class ACompoundServiceManager<U, V>
     }
 
     @Override
-    public V getDataByImplementation(final Class<? extends U> service) {
+    public V getDataByClass(final Class<? extends U> service) {
         final Optional<V> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -62,7 +62,7 @@ public abstract class ACompoundServiceManager<U, V>
         synchronized (this.subManagers) {
             for (final IServiceManager<U> m : this.subManagers) {
                 if (m instanceof ICompoundServiceManager) {
-                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByImplementation(service);
+                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByClass(service);
                     if (data != null) {
                         return data;
                     }
@@ -121,7 +121,7 @@ public abstract class ACompoundServiceManager<U, V>
 
     @Override
     @SuppressWarnings("unchecked")
-    public ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable final V data) {
+    public ICompoundServiceHolder<? extends U, V>[] getHolderByData(@Nullable final V data) {
         final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
         synchronized (this.services) {
             holders.addAll(this.services.stream()
@@ -130,11 +130,11 @@ public abstract class ACompoundServiceManager<U, V>
                     .map(s -> (ICompoundServiceHolder<? extends U, V>) s)
                     .collect(Collectors.toSet()));
         }
-        
+
         synchronized (this.subManagers) {
             for (final IServiceManager<U> m : this.subManagers) {
                 if (m instanceof ICompoundServiceManager) {
-                    holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getServiceHolderByData(data)));
+                    holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getHolderByData(data)));
                 }
             }
         }

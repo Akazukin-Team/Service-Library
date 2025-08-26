@@ -18,7 +18,7 @@ public interface ICompoundServiceManager<U, V> extends IServiceManager<U> {
      *                Must not be null.
      * @return the data associated with the given service implementation class, or null if no data is associated.
      */
-    V getDataByImplementation(Class<? extends U> service);
+    V getDataByClass(Class<? extends U> service);
 
     /**
      * Retrieves data associated with the specified service.
@@ -46,5 +46,5 @@ public interface ICompoundServiceManager<U, V> extends IServiceManager<U> {
      * The returned array is never {@code null} but may be empty if no matching service holders are found.
      */
     @NotNull
-    ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable V data);
+    ICompoundServiceHolder<? extends U, V>[] getHolderByData(@Nullable V data);
 }
