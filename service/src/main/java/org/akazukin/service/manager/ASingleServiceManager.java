@@ -46,7 +46,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U2 extends U> U2 getServiceByImplementation(@NotNull final Class<U2> service) {
+    public <U2 extends U> U2 getServiceByClass(@NotNull final Class<U2> service) {
         final Optional<U2> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -61,7 +61,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
 
         synchronized (this.subManagers) {
             for (final IServiceManager<U> subManager : this.subManagers) {
-                final U2 subService = subManager.getServiceByImplementation(service);
+                final U2 subService = subManager.getServiceByClass(service);
                 if (subService != null) {
                     return subService;
                 }
@@ -77,7 +77,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
                     .anyMatch(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl.getClass()))) {
                 throw new IllegalStateException(EXCE_IMPL_REGISTERED + serviceImpl.getClass().getName());
             }
-            this.services.add(this.createServiceHolder(serviceImpl));
+            this.services.add(this.createHolder(serviceImpl));
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
         final U[] services;
         synchronized (this.subManagers) {
             services = this.subManagers.stream()
-                    .map(IServiceManager::getAllServiceHolders)
+                    .map(IServiceManager::getAllHolders)
                     .flatMap(Arrays::stream)
                     .toArray(ArrayUtils.collectToArray(this.serviceType));
         }
@@ -108,7 +108,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
     }
 
     @Override
-    public synchronized void unregisterServiceByImplementation(@NotNull final Class<? extends U> serviceImpl) {
+    public synchronized void unregisterServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
         synchronized (this.services) {
             this.services.removeIf(h -> Objects.equals(h.getImplementation().getClass(), serviceImpl));
         }
@@ -116,11 +116,11 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public IServiceHolder<? extends U>[] getAllServiceHolders() {
+    public IServiceHolder<? extends U>[] getAllHolders() {
         final IServiceHolder<? extends U>[] services;
         synchronized (this.subManagers) {
             services = this.subManagers.stream()
-                    .map(IServiceManager::getAllServiceHolders)
+                    .map(IServiceManager::getAllHolders)
                     .flatMap(Arrays::stream)
                     .toArray(ArrayUtils.collectToArray((Class<IServiceHolder<? extends U>>) (Object) IServiceHolder.class));
         }
@@ -132,7 +132,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
     }
 
     @Override
-    public IServiceHolder<? extends U> getServiceHolderByImplementation(@NotNull final Class<? extends U> service) {
+    public IServiceHolder<? extends U> getHolderByClass(@NotNull final Class<? extends U> service) {
         final Optional<IServiceHolder<? extends U>> opt;
         synchronized (service) {
             opt = this.services.stream()
@@ -145,7 +145,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
 
         synchronized (this.subManagers) {
             for (final IServiceManager<U> subManager : this.subManagers) {
-                final IServiceHolder<? extends U> subService = subManager.getServiceHolderByImplementation(service);
+                final IServiceHolder<? extends U> subService = subManager.getHolderByClass(service);
                 if (subService != null) {
                     return subService;
                 }
@@ -155,7 +155,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
     }
 
     @Override
-    public IServiceHolder<? extends U> getServiceHolderByService(@NotNull final U service) {
+    public IServiceHolder<? extends U> getHolderByService(@NotNull final U service) {
         return this.services.stream()
                 .filter(s -> s.getImplementation() == service)
                 .findFirst()
@@ -185,7 +185,7 @@ public abstract class ASingleServiceManager<U> implements IServiceManager<U> {
      * Must not be {@code null}.
      */
     @NotNull
-    protected IServiceHolder<? extends U> createServiceHolder(final @NotNull U serviceImpl) {
+    protected IServiceHolder<? extends U> createHolder(final @NotNull U serviceImpl) {
         return new ServiceHolder<>(serviceImpl);
     }
 }

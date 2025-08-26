@@ -18,7 +18,7 @@ public interface IServiceManager<U> {
      * @return the instance of the service matching the specified implementation class, or {@code null} if no service is found
      */
     @Nullable
-    <U2 extends U> U2 getServiceByImplementation(@NotNull Class<U2> service);
+    <U2 extends U> U2 getServiceByClass(@NotNull Class<U2> service);
 
     /**
      * Registers a service implementation.
@@ -56,7 +56,7 @@ public interface IServiceManager<U> {
      * @param serviceImpl the class object representing the implementation type of the service to be unregistered;
      *                    must not be null.
      */
-    void unregisterServiceByImplementation(@NotNull Class<? extends U> serviceImpl);
+    void unregisterServiceByClass(@NotNull Class<? extends U> serviceImpl);
 
     /**
      * Retrieves an array of all service holders that the registered service.
@@ -65,7 +65,7 @@ public interface IServiceManager<U> {
      * Must not be {@code null}.
      */
     @NotNull
-    IServiceHolder<? extends U>[] getAllServiceHolders();
+    IServiceHolder<? extends U>[] getAllHolders();
 
     /**
      * Retrieves the service holder associated with the given service implementation class.
@@ -75,7 +75,7 @@ public interface IServiceManager<U> {
      * @return the service holder matching the specified implementation class, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getServiceHolderByImplementation(@NotNull Class<? extends U> service);
+    IServiceHolder<? extends U> getHolderByClass(@NotNull Class<? extends U> service);
 
     /**
      * Retrieves the service holder associated with the given service instance.
@@ -85,7 +85,7 @@ public interface IServiceManager<U> {
      * @return the service holder matching the specified service instance, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getServiceHolderByService(@NotNull U service);
+    IServiceHolder<? extends U> getHolderByService(@NotNull U service);
 
     void registerSubServiceManager(IServiceManager<U> subManager);
 

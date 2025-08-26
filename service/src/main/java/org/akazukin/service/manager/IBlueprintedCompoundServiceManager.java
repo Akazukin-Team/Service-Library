@@ -14,5 +14,5 @@ public interface IBlueprintedCompoundServiceManager<U, V> extends IBlueprintedSe
      *                Must not be {@code null}.
      * @return the data associated with the given service interface, or {@code null} if no data is associated.
      */
-    V getDataByInterface(Class<? extends U> service);
+    V getDataByInterfaceClass(Class<? extends U> service);
 }

@@ -48,7 +48,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
     }
 
     @Override
-    public V getDataByImplementation(final Class<? extends U> service) {
+    public V getDataByClass(final Class<? extends U> service) {
         final Optional<V> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -67,7 +67,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
                 if (!(subManager instanceof ICompoundServiceManager)) {
                     continue;
                 }
-                final V data = ((ICompoundServiceManager<U, V>) subManager).getDataByImplementation(service);
+                final V data = ((ICompoundServiceManager<U, V>) subManager).getDataByClass(service);
                 if (data != null) {
                     return data;
                 }
@@ -128,7 +128,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
 
     @Override
     @SuppressWarnings("unchecked")
-    public ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable final V data) {
+    public ICompoundServiceHolder<? extends U, V>[] getHolderByData(@Nullable final V data) {
         final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
         synchronized (this.services) {
             holders.addAll(this.services.stream()
@@ -144,14 +144,14 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
                 if (!(subManager instanceof ICompoundServiceManager)) {
                     continue;
                 }
-                holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) subManager).getServiceHolderByData(data)));
+                holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) subManager).getHolderByData(data)));
             }
         }
         return holders.toArray(ArrayUtils.getNewArray(ICompoundServiceHolder.class, 0));
     }
 
     @Override
-    public V getDataByInterface(final Class<? extends U> service) {
+    public V getDataByInterfaceClass(final Class<? extends U> service) {
         final Optional<V> opt;
         synchronized (this.services) {
             opt = this.services.stream()
@@ -169,7 +169,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
                 if (!(subManager instanceof IBlueprintedCompoundServiceManager)) {
                     continue;
                 }
-                final V data = ((IBlueprintedCompoundServiceManager<U, V>) subManager).getDataByInterface(service);
+                final V data = ((IBlueprintedCompoundServiceManager<U, V>) subManager).getDataByInterfaceClass(service);
                 if (data != null) {
                     return data;
                 }
@@ -179,7 +179,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
     }
 
     @Override
-    protected @NotNull <U2 extends U> IBlueprintedCompoundServiceHolder<U2, V> createServiceHolder(final @NotNull Class<U2> service, @NotNull final U2 serviceImpl) {
+    protected @NotNull <U2 extends U> IBlueprintedCompoundServiceHolder<U2, V> createHolder(final @NotNull Class<U2> service, @NotNull final U2 serviceImpl) {
         return new BlueprintedCompoundServiceHolder<>(service, serviceImpl);
     }
 }
