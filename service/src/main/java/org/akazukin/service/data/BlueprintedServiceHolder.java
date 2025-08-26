@@ -25,6 +25,6 @@ public final class BlueprintedServiceHolder<T> implements IBlueprintedServiceHol
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.interfaceClass);
+        return Objects.hashCode(this.implementation.getClass());
     }
 }
