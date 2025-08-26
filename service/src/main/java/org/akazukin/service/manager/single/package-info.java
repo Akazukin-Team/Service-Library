@@ -7,4 +7,4 @@
  * type-safe access and management of service instances
  * in a structured manner.
  */
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;

@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import org.akazukin.service.data.IBlueprintedServiceHolder;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <U> the type of services managed
  */
-public interface IBlueprintedServiceManager<U> extends IServiceManager<U> {
+public interface IBlueprintedSingleServiceManager<U> extends ISingleServiceManager<U> {
     /**
      * Retrieves a service instance based on its interface type.
      *
