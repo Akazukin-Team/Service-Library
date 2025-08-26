@@ -86,4 +86,8 @@ public interface IServiceManager<U> {
      */
     @Nullable
     IServiceHolder<? extends U> getServiceHolderByService(@NotNull U service);
+
+    void registerSubServiceManager(IServiceManager<U> subManager);
+
+    void unregisterSubServiceManager(IServiceManager<U> subManager);
 }
