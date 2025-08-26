@@ -7,6 +7,7 @@ import org.akazukin.service.data.IServiceHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A base abstract class that provides the implementation of a service management system.
@@ -34,12 +35,30 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
     @Override
     @SuppressWarnings("unchecked")
     public <U2 extends U> U2 getServiceByInterface(@NotNull final Class<U2> service) {
-        return (U2) this.services.stream()
-                .filter(s -> s instanceof IBlueprintedServiceHolder
-                        && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
-                .findFirst()
-                .map(IServiceHolder::getImplementation)
-                .orElse(null);
+        final Optional<U2> opt;
+        synchronized (this.services) {
+            opt = this.services.stream()
+                    .filter(s -> s instanceof IBlueprintedServiceHolder
+                            && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
+                    .findFirst()
+                    .map(IServiceHolder::getImplementation)
+                    .map(s -> (U2) s);
+        }
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> subManager : this.subManagers) {
+                if (subManager instanceof IBlueprintedServiceManager) {
+                    final U2 subService = ((IBlueprintedServiceManager<U>) subManager).getServiceByInterface(service);
+                    if (subService != null) {
+                        return subService;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -80,11 +99,28 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
 
     @Override
     public IBlueprintedServiceHolder<? extends U> getServiceHolderByInterface(@NotNull final Class<? extends U> service) {
-        return (IBlueprintedServiceHolder<? extends U>)
-                this.services.stream()
-                        .filter(s -> s instanceof IBlueprintedServiceHolder
-                                && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
-                        .findFirst()
-                        .orElse(null);
+        final Optional<IBlueprintedServiceHolder<? extends U>> opt;
+        synchronized (this.services) {
+            opt = this.services.stream()
+                    .filter(s -> s instanceof IBlueprintedServiceHolder
+                            && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
+                    .findFirst()
+                    .map(s -> (IBlueprintedServiceHolder<? extends U>) s);
+        }
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> subManager : this.subManagers) {
+                if (subManager instanceof IBlueprintedServiceManager) {
+                    final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedServiceManager<U>) subManager).getServiceHolderByInterface(service);
+                    if (subService != null) {
+                        return subService;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

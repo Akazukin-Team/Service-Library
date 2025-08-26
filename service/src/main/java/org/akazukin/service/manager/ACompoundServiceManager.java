@@ -8,7 +8,12 @@ import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of a compound service manager that manages services and their associated data.
@@ -42,38 +47,97 @@ public abstract class ACompoundServiceManager<U, V>
 
     @Override
     public V getDataByImplementation(final Class<? extends U> service) {
-        return this.services.stream()
-                .filter(s -> s instanceof ICompoundServiceHolder
-                        && Objects.equals(s.getImplementation().getClass(), service))
-                .findFirst()
-                .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
-                .orElse(null);
+        final Optional<V> opt;
+        synchronized (this.services) {
+            opt = this.services.stream()
+                    .filter(s -> s instanceof ICompoundServiceHolder
+                            && Objects.equals(s.getImplementation().getClass(), service))
+                    .findFirst()
+                    .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
+        }
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundServiceManager) {
+                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByImplementation(service);
+                    if (data != null) {
+                        return data;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public V getDataByService(final @NotNull U service) {
-        return this.services.stream()
-                .filter(s -> s instanceof ICompoundServiceHolder
-                        && s.getImplementation() == service)
-                .findFirst()
-                .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
-                .orElse(null);
+        final Optional<V> opt;
+        synchronized (this.services) {
+            opt = this.services.stream()
+                    .filter(s -> s instanceof ICompoundServiceHolder
+                            && s.getImplementation() == service)
+                    .findFirst()
+                    .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
+        }
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundServiceManager) {
+                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByService(service);
+                    if (data != null) {
+                        return data;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public V[] getAllData() {
-        return this.services.stream()
-                .filter(s -> s instanceof ICompoundServiceHolder)
-                .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
-                .toArray(ArrayUtils.collectToArray(this.dataType));
+        final Set<V> data = new HashSet<>();
+        synchronized (this.services) {
+            data.addAll(this.services.stream()
+                    .filter(s -> s instanceof ICompoundServiceHolder)
+                    .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
+                    .collect(Collectors.toSet()));
+        }
+
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundServiceManager) {
+                    data.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getAllData()));
+                }
+            }
+        }
+        return data.toArray(ArrayUtils.getNewArray(this.dataType, 0));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public ICompoundServiceHolder<? extends U, V>[] getServiceHolderByData(@Nullable final V data) {
-        return this.services.stream()
-                .filter(s -> s instanceof ICompoundServiceHolder
-                        && Objects.equals(((ICompoundServiceHolder<? extends U, V>) s).getData(), data))
-                .toArray(ArrayUtils.collectToArray((Class<ICompoundServiceHolder<? extends U, V>>) (Object) ICompoundServiceHolder.class));
+        final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
+        synchronized (this.services) {
+            holders.addAll(this.services.stream()
+                    .filter(s -> s instanceof ICompoundServiceHolder
+                            && Objects.equals(((ICompoundServiceHolder<? extends U, V>) s).getData(), data))
+                    .map(s -> (ICompoundServiceHolder<? extends U, V>) s)
+                    .collect(Collectors.toSet()));
+        }
+        
+        synchronized (this.subManagers) {
+            for (final IServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundServiceManager) {
+                    holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getServiceHolderByData(data)));
+                }
+            }
+        }
+        return holders.toArray(ArrayUtils.getNewArray((Class<ICompoundServiceHolder<? extends U, V>>) (Object) ICompoundServiceHolder.class, 0));
     }
 }
