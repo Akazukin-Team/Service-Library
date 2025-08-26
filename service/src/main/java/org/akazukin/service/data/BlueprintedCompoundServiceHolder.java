@@ -32,6 +32,6 @@ public class BlueprintedCompoundServiceHolder<T, U> implements IBlueprintedCompo
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.interfaceClass);
+        return Objects.hashCode(this.implementation.getClass());
     }
 }
