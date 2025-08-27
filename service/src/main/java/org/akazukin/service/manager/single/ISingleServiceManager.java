@@ -70,6 +70,7 @@ public interface ISingleServiceManager<U> {
     /**
      * Retrieves the service holder associated with the given service implementation class.
      *
+     * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
      * @param service the class object representing the implementation type of the service.
      *                Must not be null.
      * @return the service holder matching the specified implementation class, or null if no service holder is found.
@@ -80,6 +81,7 @@ public interface ISingleServiceManager<U> {
     /**
      * Retrieves the service holder associated with the given service instance.
      *
+     * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
      * @param service the instance of the service for which the service holder is to be retrieved.
      *                Must not be null.
      * @return the service holder matching the specified service instance, or null if no service holder is found.
@@ -166,6 +168,7 @@ public interface ISingleServiceManager<U> {
     /**
      * Retrieves the service holder associated with the given service interface type.
      *
+     * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
      * @param service the class object representing the interface type of the service.
      *                Must not be {@code null}.
      * @return the service holder matching the specified interface type, or null if no service holder is found.
