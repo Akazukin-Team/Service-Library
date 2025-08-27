@@ -98,14 +98,14 @@ public abstract class ABlueprintedSingleServiceManager<U> extends ASingleService
     }
 
     @Override
-    public IBlueprintedServiceHolder<? extends U> getHolderByInterfaceClass(@NotNull final Class<? extends U> service) {
-        final Optional<IBlueprintedServiceHolder<? extends U>> opt;
+    public <U2 extends U> IBlueprintedServiceHolder<U2> getHolderByInterfaceClass(@NotNull final Class<U2> service) {
+        final Optional<IBlueprintedServiceHolder<U2>> opt;
         synchronized (this.services) {
             opt = this.services.stream()
-                    .filter(s -> s instanceof IBlueprintedServiceHolder
-                            && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
-                    .findFirst()
-                    .map(s -> (IBlueprintedServiceHolder<? extends U>) s);
+                    .filter(s -> s instanceof IBlueprintedServiceHolder)
+                    .map(s -> (IBlueprintedServiceHolder<U2>) s)
+                    .filter(s -> Objects.equals(s.getInterfaceClass(), service))
+                    .findFirst();
         }
         if (opt.isPresent()) {
             return opt.get();
@@ -116,7 +116,7 @@ public abstract class ABlueprintedSingleServiceManager<U> extends ASingleService
                 if (subManager instanceof IBlueprintedSingleServiceManager) {
                     final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedSingleServiceManager<U>) subManager).getHolderByInterfaceClass(service);
                     if (subService != null) {
-                        return subService;
+                        return (IBlueprintedServiceHolder<U2>) subService;
                     }
                 }
             }

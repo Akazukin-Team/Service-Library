@@ -132,12 +132,14 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     }
 
     @Override
-    public IServiceHolder<? extends U> getHolderByClass(@NotNull final Class<? extends U> service) {
-        final Optional<IServiceHolder<? extends U>> opt;
+    @SuppressWarnings("unchecked")
+    public <U2 extends U> IServiceHolder<U2> getHolderByClass(@NotNull final Class<U2> service) {
+        final Optional<IServiceHolder<U2>> opt;
         synchronized (service) {
             opt = this.services.stream()
                     .filter(s -> Objects.equals(s.getImplementation().getClass(), service))
-                    .findFirst();
+                    .findFirst()
+                    .map(s -> (IServiceHolder<U2>) s);
         }
         if (opt.isPresent()) {
             return opt.get();
@@ -145,7 +147,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
 
         synchronized (this.subManagers) {
             for (final ISingleServiceManager<U> subManager : this.subManagers) {
-                final IServiceHolder<? extends U> subService = subManager.getHolderByClass(service);
+                final IServiceHolder<U2> subService = subManager.getHolderByClass(service);
                 if (subService != null) {
                     return subService;
                 }
@@ -155,8 +157,9 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     }
 
     @Override
-    public IServiceHolder<? extends U> getHolderByService(@NotNull final U service) {
-        return this.services.stream()
+    @SuppressWarnings("unchecked")
+    public <U2 extends U> IServiceHolder<U2> getHolderByService(@NotNull final U2 service) {
+        return (IServiceHolder<U2>) this.services.stream()
                 .filter(s -> s.getImplementation() == service)
                 .findFirst()
                 .orElse(null);

@@ -75,7 +75,7 @@ public interface ISingleServiceManager<U> {
      * @return the service holder matching the specified implementation class, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getHolderByClass(@NotNull Class<? extends U> service);
+    <U2 extends U> IServiceHolder<U2> getHolderByClass(@NotNull Class<U2> service);
 
     /**
      * Retrieves the service holder associated with the given service instance.
@@ -85,7 +85,7 @@ public interface ISingleServiceManager<U> {
      * @return the service holder matching the specified service instance, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getHolderByService(@NotNull U service);
+    <U2 extends U> IServiceHolder<U2> getHolderByService(@NotNull U2 service);
 
     void registerSubServiceManager(ISingleServiceManager<U> subManager);
 

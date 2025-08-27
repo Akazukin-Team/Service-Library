@@ -82,8 +82,7 @@ public abstract class ABlueprintedCompoundSingleServiceManager<U, V>
         synchronized (this.services) {
             opt = this.services.stream()
                     .filter(s ->
-                            s instanceof ICompoundServiceHolder
-                                    && s.getImplementation() == service)
+                            s instanceof ICompoundServiceHolder && s.getImplementation() == service)
                     .findFirst()
                     .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
         }
@@ -132,8 +131,7 @@ public abstract class ABlueprintedCompoundSingleServiceManager<U, V>
         final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
         synchronized (this.services) {
             holders.addAll(this.services.stream()
-                    .filter(s ->
-                            s instanceof ICompoundServiceHolder)
+                    .filter(s -> s instanceof ICompoundServiceHolder)
                     .map(s -> (ICompoundServiceHolder<? extends U, V>) s)
                     .filter(s -> Objects.equals(s.getData(), data))
                     .collect(Collectors.toSet()));
@@ -155,10 +153,11 @@ public abstract class ABlueprintedCompoundSingleServiceManager<U, V>
         final Optional<V> opt;
         synchronized (this.services) {
             opt = this.services.stream()
-                    .filter(s -> s instanceof IBlueprintedCompoundServiceHolder
-                            && Objects.equals(((IBlueprintedCompoundServiceHolder<? extends U, V>) s).getInterfaceClass(), service))
+                    .filter(s -> s instanceof IBlueprintedCompoundServiceHolder)
+                    .map(s -> (IBlueprintedCompoundServiceHolder<? extends U, V>) s)
+                    .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                     .findFirst()
-                    .map(s -> ((IBlueprintedCompoundServiceHolder<? extends U, V>) s).getData());
+                    .map(ICompoundServiceHolder::getData);
         }
         if (opt.isPresent()) {
             return opt.get();

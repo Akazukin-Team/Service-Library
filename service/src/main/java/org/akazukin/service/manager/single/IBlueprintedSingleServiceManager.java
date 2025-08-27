@@ -54,5 +54,5 @@ public interface IBlueprintedSingleServiceManager<U> extends ISingleServiceManag
      * @return the service holder matching the specified interface type, or null if no service holder is found.
      */
     @Nullable
-    IBlueprintedServiceHolder<? extends U> getHolderByInterfaceClass(@NotNull Class<? extends U> service);
+    <U2 extends U> IBlueprintedServiceHolder<U2> getHolderByInterfaceClass(@NotNull Class<U2> service);
 }
