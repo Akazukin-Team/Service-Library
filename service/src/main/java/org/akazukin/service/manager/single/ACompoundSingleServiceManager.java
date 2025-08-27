@@ -6,7 +6,6 @@ import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.ICompoundServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -119,27 +118,5 @@ public abstract class ACompoundSingleServiceManager<U, V>
             }
         }
         return data.toArray(ArrayUtils.getNewArray(this.dataType, 0));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public ICompoundServiceHolder<? extends U, V>[] getHolderByData(@Nullable final V data) {
-        final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
-        synchronized (this.services) {
-            holders.addAll(this.services.stream()
-                    .filter(s -> s instanceof ICompoundServiceHolder
-                            && Objects.equals(((ICompoundServiceHolder<? extends U, V>) s).getData(), data))
-                    .map(s -> (ICompoundServiceHolder<? extends U, V>) s)
-                    .collect(Collectors.toSet()));
-        }
-
-        synchronized (this.subManagers) {
-            for (final ISingleServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundSingleServiceManager) {
-                    holders.addAll(Arrays.asList(((ICompoundSingleServiceManager<U, V>) m).getHolderByData(data)));
-                }
-            }
-        }
-        return holders.toArray(ArrayUtils.getNewArray((Class<ICompoundServiceHolder<? extends U, V>>) (Object) ICompoundServiceHolder.class, 0));
     }
 }

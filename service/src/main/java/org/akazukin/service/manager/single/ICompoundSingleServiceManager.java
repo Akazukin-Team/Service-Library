@@ -1,6 +1,5 @@
 package org.akazukin.service.manager.single;
 
-import org.akazukin.service.data.ICompoundServiceHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,14 +45,4 @@ public interface ICompoundSingleServiceManager<U, V> extends ISingleServiceManag
      * Must not be {@code null}.
      */
     V[] getAllData();
-
-    /**
-     * Retrieves an array of service holders associated with the given data.
-     *
-     * @param data the data to find associated service holders
-     * @return an array of service holders that are associated with the specified data.
-     * The returned array is never {@code null} but may be empty if no matching service holders are found.
-     */
-    @NotNull
-    ICompoundServiceHolder<? extends U, V>[] getHolderByData(@Nullable V data);
 }
