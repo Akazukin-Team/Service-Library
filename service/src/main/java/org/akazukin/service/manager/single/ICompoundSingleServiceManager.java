@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import org.akazukin.service.data.ICompoundServiceHolder;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <U> the type of the service managed by the service holder.
  * @param <V> the type of data associated with the service holder.
  */
-public interface ICompoundServiceManager<U, V> extends IServiceManager<U> {
+public interface ICompoundSingleServiceManager<U, V> extends ISingleServiceManager<U> {
     /**
      * Retrieves data associated with the given service implementation class.
      *

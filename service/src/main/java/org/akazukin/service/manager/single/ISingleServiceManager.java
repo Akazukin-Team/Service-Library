@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import org.akazukin.service.data.IServiceHolder;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <U> the type of the service managed by the service holder.
  */
-public interface IServiceManager<U> {
+public interface ISingleServiceManager<U> {
     /**
      * Retrieves a registered service by its specific implementation class.
      *
@@ -75,7 +75,7 @@ public interface IServiceManager<U> {
      * @return the service holder matching the specified implementation class, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getHolderByClass(@NotNull Class<? extends U> service);
+    <U2 extends U> IServiceHolder<U2> getHolderByClass(@NotNull Class<U2> service);
 
     /**
      * Retrieves the service holder associated with the given service instance.
@@ -85,9 +85,9 @@ public interface IServiceManager<U> {
      * @return the service holder matching the specified service instance, or null if no service holder is found.
      */
     @Nullable
-    IServiceHolder<? extends U> getHolderByService(@NotNull U service);
+    <U2 extends U> IServiceHolder<U2> getHolderByService(@NotNull U2 service);
 
-    void registerSubServiceManager(IServiceManager<U> subManager);
+    void registerSubServiceManager(ISingleServiceManager<U> subManager);
 
-    void unregisterSubServiceManager(IServiceManager<U> subManager);
+    void unregisterSubServiceManager(ISingleServiceManager<U> subManager);
 }

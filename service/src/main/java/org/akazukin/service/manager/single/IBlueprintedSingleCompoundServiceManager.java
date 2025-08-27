@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 /**
  * Interface defining management operations for compound service holders and associated data.
@@ -6,7 +6,7 @@ package org.akazukin.service.manager;
  * @param <U> the type of the service managed by the service holder.
  * @param <V> the type of data associated with the service holder.
  */
-public interface IBlueprintedCompoundServiceManager<U, V> extends IBlueprintedServiceManager<U>, ICompoundServiceManager<U, V> {
+public interface IBlueprintedSingleCompoundServiceManager<U, V> extends IBlueprintedSingleServiceManager<U>, ICompoundSingleServiceManager<U, V> {
     /**
      * Retrieves data associated with the specified service interface.
      *

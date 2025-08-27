@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of a compound service manager that manages services and their associated data.
- * Extends the {@link ABlueprintedServiceManager} with additional functionalities for handling data linked with service holders.
+ * Extends the {@link ABlueprintedSingleServiceManager} with additional functionalities for handling data linked with service holders.
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ACompoundServiceManager<U, V>
-        extends ASingleServiceManager<U> implements ICompoundServiceManager<U, V> {
+public abstract class ACompoundSingleServiceManager<U, V>
+        extends ASingleServiceManager<U> implements ICompoundSingleServiceManager<U, V> {
     Class<V> dataType;
 
     /**
@@ -40,7 +40,7 @@ public abstract class ACompoundServiceManager<U, V>
      *                    Must not be null.
      * @param dataType    the class object representing the type of data associated with the services.
      */
-    protected ACompoundServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
+    protected ACompoundSingleServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
         super(serviceType);
         this.dataType = dataType;
     }
@@ -60,9 +60,9 @@ public abstract class ACompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundServiceManager) {
-                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByClass(service);
+            for (final ISingleServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundSingleServiceManager) {
+                    final V data = ((ICompoundSingleServiceManager<U, V>) m).getDataByClass(service);
                     if (data != null) {
                         return data;
                     }
@@ -87,9 +87,9 @@ public abstract class ACompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundServiceManager) {
-                    final V data = ((ICompoundServiceManager<U, V>) m).getDataByService(service);
+            for (final ISingleServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundSingleServiceManager) {
+                    final V data = ((ICompoundSingleServiceManager<U, V>) m).getDataByService(service);
                     if (data != null) {
                         return data;
                     }
@@ -110,9 +110,9 @@ public abstract class ACompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundServiceManager) {
-                    data.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getAllData()));
+            for (final ISingleServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundSingleServiceManager) {
+                    data.addAll(Arrays.asList(((ICompoundSingleServiceManager<U, V>) m).getAllData()));
                 }
             }
         }
@@ -132,9 +132,9 @@ public abstract class ACompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundServiceManager) {
-                    holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) m).getHolderByData(data)));
+            for (final ISingleServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundSingleServiceManager) {
+                    holders.addAll(Arrays.asList(((ICompoundSingleServiceManager<U, V>) m).getHolderByData(data)));
                 }
             }
         }

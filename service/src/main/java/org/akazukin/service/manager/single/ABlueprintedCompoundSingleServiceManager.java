@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of a compound service manager that manages services and their associated data.
- * Extends the {@link ABlueprintedServiceManager} with additional functionalities for handling data linked with service holders.
+ * Extends the {@link ABlueprintedSingleServiceManager} with additional functionalities for handling data linked with service holders.
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ABlueprintedCompoundServiceManager<U, V>
-        extends ABlueprintedServiceManager<U> implements IBlueprintedCompoundServiceManager<U, V> {
+public abstract class ABlueprintedCompoundSingleServiceManager<U, V>
+        extends ABlueprintedSingleServiceManager<U> implements IBlueprintedSingleCompoundServiceManager<U, V> {
     Class<V> dataType;
 
     /**
@@ -42,7 +42,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
      *                    Must not be null.
      * @param dataType    the class object representing the type of data associated with the services.
      */
-    protected ABlueprintedCompoundServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
+    protected ABlueprintedCompoundSingleServiceManager(final @NotNull Class<U> serviceType, final Class<V> dataType) {
         super(serviceType);
         this.dataType = dataType;
     }
@@ -63,11 +63,11 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (!(subManager instanceof ICompoundServiceManager)) {
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (!(subManager instanceof ICompoundSingleServiceManager)) {
                     continue;
                 }
-                final V data = ((ICompoundServiceManager<U, V>) subManager).getDataByClass(service);
+                final V data = ((ICompoundSingleServiceManager<U, V>) subManager).getDataByClass(service);
                 if (data != null) {
                     return data;
                 }
@@ -82,8 +82,7 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         synchronized (this.services) {
             opt = this.services.stream()
                     .filter(s ->
-                            s instanceof ICompoundServiceHolder
-                                    && s.getImplementation() == service)
+                            s instanceof ICompoundServiceHolder && s.getImplementation() == service)
                     .findFirst()
                     .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
         }
@@ -92,11 +91,11 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (!(subManager instanceof ICompoundServiceManager)) {
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (!(subManager instanceof ICompoundSingleServiceManager)) {
                     continue;
                 }
-                final V data = ((ICompoundServiceManager<U, V>) subManager).getDataByService(service);
+                final V data = ((ICompoundSingleServiceManager<U, V>) subManager).getDataByService(service);
                 if (data != null) {
                     return data;
                 }
@@ -116,11 +115,11 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (!(subManager instanceof ICompoundServiceManager)) {
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (!(subManager instanceof ICompoundSingleServiceManager)) {
                     continue;
                 }
-                data.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) subManager).getAllData()));
+                data.addAll(Arrays.asList(((ICompoundSingleServiceManager<U, V>) subManager).getAllData()));
             }
         }
         return data.toArray(ArrayUtils.getNewArray(this.dataType, 0));
@@ -132,19 +131,18 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         final Set<ICompoundServiceHolder<? extends U, V>> holders = new HashSet<>();
         synchronized (this.services) {
             holders.addAll(this.services.stream()
-                    .filter(s ->
-                            s instanceof ICompoundServiceHolder)
+                    .filter(s -> s instanceof ICompoundServiceHolder)
                     .map(s -> (ICompoundServiceHolder<? extends U, V>) s)
                     .filter(s -> Objects.equals(s.getData(), data))
                     .collect(Collectors.toSet()));
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (!(subManager instanceof ICompoundServiceManager)) {
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (!(subManager instanceof ICompoundSingleServiceManager)) {
                     continue;
                 }
-                holders.addAll(Arrays.asList(((ICompoundServiceManager<U, V>) subManager).getHolderByData(data)));
+                holders.addAll(Arrays.asList(((ICompoundSingleServiceManager<U, V>) subManager).getHolderByData(data)));
             }
         }
         return holders.toArray(ArrayUtils.getNewArray(ICompoundServiceHolder.class, 0));
@@ -155,21 +153,22 @@ public abstract class ABlueprintedCompoundServiceManager<U, V>
         final Optional<V> opt;
         synchronized (this.services) {
             opt = this.services.stream()
-                    .filter(s -> s instanceof IBlueprintedCompoundServiceHolder
-                            && Objects.equals(((IBlueprintedCompoundServiceHolder<? extends U, V>) s).getInterfaceClass(), service))
+                    .filter(s -> s instanceof IBlueprintedCompoundServiceHolder)
+                    .map(s -> (IBlueprintedCompoundServiceHolder<? extends U, V>) s)
+                    .filter(s -> Objects.equals(s.getInterfaceClass(), service))
                     .findFirst()
-                    .map(s -> ((IBlueprintedCompoundServiceHolder<? extends U, V>) s).getData());
+                    .map(ICompoundServiceHolder::getData);
         }
         if (opt.isPresent()) {
             return opt.get();
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (!(subManager instanceof IBlueprintedCompoundServiceManager)) {
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (!(subManager instanceof IBlueprintedSingleCompoundServiceManager)) {
                     continue;
                 }
-                final V data = ((IBlueprintedCompoundServiceManager<U, V>) subManager).getDataByInterfaceClass(service);
+                final V data = ((IBlueprintedSingleCompoundServiceManager<U, V>) subManager).getDataByInterfaceClass(service);
                 if (data != null) {
                     return data;
                 }

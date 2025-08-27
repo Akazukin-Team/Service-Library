@@ -1,4 +1,4 @@
-package org.akazukin.service.manager;
+package org.akazukin.service.manager.single;
 
 import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.BlueprintedServiceHolder;
@@ -19,7 +19,7 @@ import java.util.Optional;
  * @param <U> The type of the service object managed by this service manager.
  */
 @ThreadSafe
-public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManager<U> implements IBlueprintedServiceManager<U> {
+public abstract class ABlueprintedSingleServiceManager<U> extends ASingleServiceManager<U> implements IBlueprintedSingleServiceManager<U> {
     public static final String EXCE_INTERFACE_REGISTERED = "An service that associated is already registered; Interface:";
 
     /**
@@ -28,7 +28,7 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
      * @param serviceType the class object representing the type of the service.
      *                    Must not be null.
      */
-    protected ABlueprintedServiceManager(@NotNull final Class<U> serviceType) {
+    protected ABlueprintedSingleServiceManager(@NotNull final Class<U> serviceType) {
         super(serviceType);
     }
 
@@ -49,9 +49,9 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (subManager instanceof IBlueprintedServiceManager) {
-                    final U2 subService = ((IBlueprintedServiceManager<U>) subManager).getServiceByInterfaceClass(service);
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (subManager instanceof IBlueprintedSingleServiceManager) {
+                    final U2 subService = ((IBlueprintedSingleServiceManager<U>) subManager).getServiceByInterfaceClass(service);
                     if (subService != null) {
                         return subService;
                     }
@@ -98,25 +98,25 @@ public abstract class ABlueprintedServiceManager<U> extends ASingleServiceManage
     }
 
     @Override
-    public IBlueprintedServiceHolder<? extends U> getHolderByInterfaceClass(@NotNull final Class<? extends U> service) {
-        final Optional<IBlueprintedServiceHolder<? extends U>> opt;
+    public <U2 extends U> IBlueprintedServiceHolder<U2> getHolderByInterfaceClass(@NotNull final Class<U2> service) {
+        final Optional<IBlueprintedServiceHolder<U2>> opt;
         synchronized (this.services) {
             opt = this.services.stream()
-                    .filter(s -> s instanceof IBlueprintedServiceHolder
-                            && Objects.equals(((IBlueprintedServiceHolder<? extends U>) s).getInterfaceClass(), service))
-                    .findFirst()
-                    .map(s -> (IBlueprintedServiceHolder<? extends U>) s);
+                    .filter(s -> s instanceof IBlueprintedServiceHolder)
+                    .map(s -> (IBlueprintedServiceHolder<U2>) s)
+                    .filter(s -> Objects.equals(s.getInterfaceClass(), service))
+                    .findFirst();
         }
         if (opt.isPresent()) {
             return opt.get();
         }
 
         synchronized (this.subManagers) {
-            for (final IServiceManager<U> subManager : this.subManagers) {
-                if (subManager instanceof IBlueprintedServiceManager) {
-                    final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedServiceManager<U>) subManager).getHolderByInterfaceClass(service);
+            for (final ISingleServiceManager<U> subManager : this.subManagers) {
+                if (subManager instanceof IBlueprintedSingleServiceManager) {
+                    final IBlueprintedServiceHolder<? extends U> subService = ((IBlueprintedSingleServiceManager<U>) subManager).getHolderByInterfaceClass(service);
                     if (subService != null) {
-                        return subService;
+                        return (IBlueprintedServiceHolder<U2>) subService;
                     }
                 }
             }
