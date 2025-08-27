@@ -4,11 +4,23 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a holder interface for managing a service of a specific type.
- * This interface is designed to provide type-safe access to the implementation of a service.
+ * This interface is designed to provide type-safe access
+ * to both the interface class and the implementation of a service.
  *
  * @param <T> the type of the service
  */
 public interface IServiceHolder<T> {
+    /**
+     * Retrieves the interface class associated with the service type managed by the holder.
+     * This method returns the class object representing the service interface,
+     * which may be useful for identifying or retrieving services
+     * based on their interface types.
+     *
+     * @return the class object of the service interface,
+     * or {@code null} if the service is not explicitly associated with an interface class
+     */
+    Class<? super T> getInterfaceClass();
+
     /**
      * Retrieves the concrete implementation of the service managed by the holder.
      * This method provides access to the actual service instance,

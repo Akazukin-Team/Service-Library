@@ -21,6 +21,15 @@ public interface ICompoundSingleServiceManager<U, V> extends ISingleServiceManag
     V getDataByClass(Class<? extends U> service);
 
     /**
+     * Retrieves data associated with the specified service interface.
+     *
+     * @param service the service interface class whose associated data is to be retrieved.
+     *                Must not be {@code null}.
+     * @return the data associated with the given service interface, or {@code null} if no data is associated.
+     */
+    V getDataByInterfaceClass(Class<? extends U> service);
+
+    /**
      * Retrieves data associated with the specified service.
      *
      * @param service the service whose associated data is to be retrieved.

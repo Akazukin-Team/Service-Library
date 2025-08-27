@@ -16,12 +16,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * An abstract implementation of a compound service manager that manages services and their associated data.
- * Extends the {@link ABlueprintedSingleServiceManager} with additional functionalities for handling data linked with service holders.
+ * A base abstract class that provides the implementation of a service management system.
+ * <p>
+ * Extends the {@link ASingleServiceManager} with additional functionalities
+ * for handling data linked with service holders.
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
  *
- * @param <U> the type of service managed by this manager.
+ * @param <U> The type of the service object managed by this service manager.
  * @param <V> the type of data associated with the services.
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
