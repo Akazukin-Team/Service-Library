@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * A concrete implementation of the {@link IBlueprintedServiceHolder} interface.
+ * A concrete implementation of the {@link ICompoundServiceHolder} interface.
  * This class serves as a type-safe holder for managing both the interface
- * class and the implementation of a specific service.
+ * class and the implementation of a specific service without specifying interfaceClass.
  *
  * @param <T> the type of the service
  */
@@ -30,6 +30,12 @@ public class CompoundServiceHolder<T, U> implements ICompoundServiceHolder<T, U>
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.implementation.getClass());
+        return Objects.hashCode(this.getInterfaceClass());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Class<? super T> getInterfaceClass() {
+        return (Class<T>) this.getImplementation().getClass();
     }
 }
