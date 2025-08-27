@@ -8,6 +8,7 @@ import org.akazukin.service.data.IServiceHolder;
 import org.akazukin.service.data.ServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     Class<U> serviceType;
 
     Set<ISingleServiceManager<U>> subManagers = new HashSet<>();
+    Set<ISingleServiceManager<U>> parents = new HashSet<>();
 
     /**
      * Constructs an instance of AServiceManager with the specified service holder type and service type.
@@ -73,7 +75,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     @Override
     public synchronized void registerService(final @NotNull U serviceImpl) {
         synchronized (this.services) {
-            if (this.isExistsService((Class<? extends U>) serviceImpl.getClass())) {
+            if (this.isExistsServiceDeeplyWithParent((Class<? extends U>) serviceImpl.getClass())) {
                 throw new IllegalStateException(EXCE_REGISTERED + serviceImpl.getClass().getName());
             }
             this.services.add(this.createHolder(serviceImpl));
@@ -165,16 +167,39 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     }
 
     @Override
-    public void registerSubManager(final ISingleServiceManager<U> subManager) {
+    public void registerSubManager(final ISingleServiceManager<U> subMgr) {
+        subMgr.registerParentManager(this);
         synchronized (this.subManagers) {
-            this.subManagers.add(subManager);
+            this.subManagers.add(subMgr);
         }
     }
 
     @Override
-    public void unregisterSubManager(final ISingleServiceManager<U> subManager) {
+    public void unregisterSubManager(final ISingleServiceManager<U> subMgr) {
+        subMgr.unregisterParentManager(this);
         synchronized (this.subManagers) {
-            this.subManagers.remove(subManager);
+            this.subManagers.remove(subMgr);
+        }
+    }
+
+    @Override
+    public void registerParentManager(final ISingleServiceManager<U> parentMgr) {
+        synchronized (this.services) {
+            synchronized (this.subManagers) {
+                if (Arrays.stream(parentMgr.getAllHolders()).anyMatch(h -> this.isExistsServiceDeeply((Class<U>) h.getInterfaceClass()))) {
+                    throw new IllegalStateException(EXCE_REGISTERED + parentMgr.getClass().getName());
+                }
+            }
+        }
+        synchronized (this.parents) {
+            this.parents.add(parentMgr);
+        }
+    }
+
+    @Override
+    public void unregisterParentManager(final ISingleServiceManager<U> parentMgr) {
+        synchronized (this.parents) {
+            this.parents.remove(parentMgr);
         }
     }
 
@@ -210,7 +235,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     @Override
     public <U2 extends U> void registerService(@NotNull final Class<U2> service, @NotNull final U2 serviceImpl) {
         synchronized (this.services) {
-            if (this.isExistsService(service)) {
+            if (this.isExistsServiceDeeplyWithParent(service)) {
                 throw new IllegalStateException(EXCE_REGISTERED + serviceImpl.getClass().getName());
             }
             this.services.add(this.createHolder(service, serviceImpl));
@@ -250,6 +275,60 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
         return null;
     }
 
+    @Override
+    public boolean isExistsService(final @NotNull Class<? extends U> service) {
+        synchronized (this.services) {
+            return this.services.stream()
+                    .anyMatch(s -> Objects.equals(s.getInterfaceClass(), service));
+        }
+    }
+
+    @Override
+    public boolean isExistsServiceDeeply(final @NotNull Class<? extends U> service) {
+        return this.isExistsServiceDeeply(service, null);
+    }
+
+    @Override
+    public boolean isExistsServiceDeeplyWithParent(final @NotNull Class<? extends U> service) {
+        return this.isExistsServiceDeeplyWithParent(service, null);
+    }
+
+    @Override
+    public boolean isExistsServiceDeeplyWithParent(@NotNull final Class<? extends U> service, @Nullable final ISingleServiceManager<U> executedMgr) {
+        if (this.isExistsServiceDeeply(service)) {
+            return true;
+        }
+        synchronized (this.parents) {
+            for (final ISingleServiceManager<U> pare : this.parents) {
+                if (pare == executedMgr) {
+                    continue;
+                }
+                if (pare.isExistsServiceDeeply(service, this)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isExistsServiceDeeply(final @NotNull Class<? extends U> service, @Nullable final ISingleServiceManager<U> executedMgr) {
+        if (this.isExistsService(service)) {
+            return true;
+        }
+        synchronized (this.subManagers) {
+            for (final ISingleServiceManager<U> subMgr : this.subManagers) {
+                if (subMgr == executedMgr) {
+                    continue;
+                }
+                if (subMgr.isExistsServiceDeeply(service, this)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Creates a service holder for the specified service interface or implementation.
      *
@@ -277,10 +356,5 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     @NotNull
     protected IServiceHolder<? extends U> createHolder(final @NotNull U serviceImpl) {
         return new ServiceHolder<>(serviceImpl);
-    }
-
-    public boolean isExistsService(final @NotNull Class<? extends U> service) {
-        return this.services.stream()
-                .anyMatch(s -> Objects.equals(s.getInterfaceClass(), service));
     }
 }
