@@ -2,6 +2,7 @@ plugins {
     id 'buildlogic.java-common-conventions'
     id 'buildlogic.java-manifest-conventions'
     id 'buildlogic.java-maven-conventions'
+    id 'buildlogic.java-repository-conventions'
 }
 
 Properties props = new Properties()
