@@ -11,6 +11,16 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ICompoundSingleServiceManager<U, V> extends ISingleServiceManager<U> {
     /**
+     * Retrieves data associated with the specified service.
+     *
+     * @param service the service whose associated data is to be retrieved.
+     *                Must not be {@code null}.
+     * @return the data associated with the given service, or {@code null} if no data is associated with the service.
+     */
+    @Nullable
+    V getDataByService(@NotNull U service);
+
+    /**
      * Retrieves data associated with the given service implementation class.
      *
      * @param service the class of the service implementation for which associated data is to be retrieved.
@@ -27,16 +37,6 @@ public interface ICompoundSingleServiceManager<U, V> extends ISingleServiceManag
      * @return the data associated with the given service interface, or {@code null} if no data is associated.
      */
     V getDataByInterfaceClass(Class<? extends U> service);
-
-    /**
-     * Retrieves data associated with the specified service.
-     *
-     * @param service the service whose associated data is to be retrieved.
-     *                Must not be {@code null}.
-     * @return the data associated with the given service, or {@code null} if no data is associated with the service.
-     */
-    @Nullable
-    V getDataByService(@NotNull U service);
 
     /**
      * Retrieves an array of all data associated with the registered services.
