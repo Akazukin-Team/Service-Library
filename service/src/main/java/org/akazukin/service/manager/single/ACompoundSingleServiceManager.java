@@ -47,33 +47,6 @@ public abstract class ACompoundSingleServiceManager<U, V>
     }
 
     @Override
-    public V getDataByClass(final Class<? extends U> service) {
-        final Optional<V> opt;
-        synchronized (this.services) {
-            opt = this.services.stream()
-                    .filter(s -> s instanceof ICompoundServiceHolder
-                            && Objects.equals(s.getImplementation().getClass(), service))
-                    .findFirst()
-                    .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
-        }
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-
-        synchronized (this.subManagers) {
-            for (final ISingleServiceManager<U> m : this.subManagers) {
-                if (m instanceof ICompoundSingleServiceManager) {
-                    final V data = ((ICompoundSingleServiceManager<U, V>) m).getDataByClass(service);
-                    if (data != null) {
-                        return data;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public V getDataByService(final @NotNull U service) {
         final Optional<V> opt;
         synchronized (this.services) {
@@ -91,6 +64,33 @@ public abstract class ACompoundSingleServiceManager<U, V>
             for (final ISingleServiceManager<U> m : this.subManagers) {
                 if (m instanceof ICompoundSingleServiceManager) {
                     final V data = ((ICompoundSingleServiceManager<U, V>) m).getDataByService(service);
+                    if (data != null) {
+                        return data;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public V getDataByClass(final Class<? extends U> service) {
+        final Optional<V> opt;
+        synchronized (this.services) {
+            opt = this.services.stream()
+                    .filter(s -> s instanceof ICompoundServiceHolder
+                            && Objects.equals(s.getImplementation().getClass(), service))
+                    .findFirst()
+                    .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData());
+        }
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        synchronized (this.subManagers) {
+            for (final ISingleServiceManager<U> m : this.subManagers) {
+                if (m instanceof ICompoundSingleServiceManager) {
+                    final V data = ((ICompoundSingleServiceManager<U, V>) m).getDataByClass(service);
                     if (data != null) {
                         return data;
                     }
