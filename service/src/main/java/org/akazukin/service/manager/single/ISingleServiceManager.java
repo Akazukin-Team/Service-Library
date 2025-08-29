@@ -91,6 +91,20 @@ public interface ISingleServiceManager<U> {
     void registerService(@NotNull U serviceImpl);
 
     /**
+     * Registers a service implementation with its corresponding service interface.
+     * This method allows associating a service interface with a specific implementation.
+     *
+     * @param <U2>        the type of the service to register, extending the base type {@link U}.
+     * @param service     the class object representing the service interface, used as the key for management.
+     *                    Must not be {@code null}.
+     * @param serviceImpl the implementation instance of the service to register.
+     *                    Must not be {@code null}.
+     * @throws IllegalStateException if the service is not null and already registered
+     *                               or
+     */
+    <U2 extends U> void registerService(@NotNull Class<U2> service, @NotNull U2 serviceImpl);
+
+    /**
      * Unregisters a service implementation from the service manager.
      * This method removes the specified service implementation from the managed collection of services.
      * If the provided implementation is not currently registered, no action is taken.
@@ -109,6 +123,16 @@ public interface ISingleServiceManager<U> {
      *                    must not be null.
      */
     void unregisterServiceByClass(@NotNull Class<? extends U> serviceImpl);
+
+    /**
+     * Unregisters a service implementation using its interface type.
+     * This method removes all instances of services associated with the specified service interface class.
+     * If no matching implementation is registered, no action is taken.
+     *
+     * @param service the class object representing the interface of the service to be unregistered;
+     *                must not be null
+     */
+    void unregisterServiceByInterfaceClass(@NotNull Class<? extends U> service);
 
     /**
      * Registers a submanager that will manage a subset of services within the current service hierarchy.
@@ -153,30 +177,6 @@ public interface ISingleServiceManager<U> {
     void unregisterParentManager(ISingleServiceManager<U> parentMgr);
 
     /**
-     * Registers a service implementation with its corresponding service interface.
-     * This method allows associating a service interface with a specific implementation.
-     *
-     * @param <U2>        the type of the service to register, extending the base type {@link U}.
-     * @param service     the class object representing the service interface, used as the key for management.
-     *                    Must not be {@code null}.
-     * @param serviceImpl the implementation instance of the service to register.
-     *                    Must not be {@code null}.
-     * @throws IllegalStateException if the service is not null and already registered
-     *                               or
-     */
-    <U2 extends U> void registerService(@NotNull Class<U2> service, @NotNull U2 serviceImpl);
-
-    /**
-     * Unregisters a service implementation using its interface type.
-     * This method removes all instances of services associated with the specified service interface class.
-     * If no matching implementation is registered, no action is taken.
-     *
-     * @param service the class object representing the interface of the service to be unregistered;
-     *                must not be null
-     */
-    void unregisterServiceByInterfaceClass(@NotNull Class<? extends U> service);
-
-    /**
      * Checks if a service is registered for the specified implementation class.
      *
      * @param service the class object representing the implementation type of the service.
@@ -196,6 +196,22 @@ public interface ISingleServiceManager<U> {
      * within the service hierarchy; {@code false} otherwise.
      */
     boolean isExistsServiceDeeply(@NotNull Class<? extends U> service);
+
+    /**
+     * Checks if a service of the specified implementation type exists within
+     * the currently managed service collection or submanagers,
+     * using an optional exclusion for a specific service manager.
+     *
+     * @param service     The class type of the service to be checked.
+     *                    Must not be null.
+     *                    Use {@link Class} to refer to the type of the service.
+     * @param executedMgr The manager context where the service presence is checked.
+     *                    May be null if no specific manager is provided.
+     *                    Use {@link ISingleServiceManager} to define the manager context.
+     * @return True if the service exists deeply in the context of the provided manager.
+     * False otherwise.
+     */
+    boolean isExistsServiceDeeply(@NotNull Class<? extends U> service, @Nullable ISingleServiceManager<U> executedMgr);
 
     /**
      * Checks if a service of the specified implementation type exists within
@@ -221,20 +237,4 @@ public interface ISingleServiceManager<U> {
      * within the service hierarchy; {@code false} otherwise.
      */
     boolean isExistsServiceDeeplyWithParent(@NotNull Class<? extends U> service, ISingleServiceManager<U> executedMgr);
-
-    /**
-     * Checks if a service of the specified implementation type exists within
-     * the currently managed service collection or submanagers,
-     * using an optional exclusion for a specific service manager.
-     *
-     * @param service     The class type of the service to be checked.
-     *                    Must not be null.
-     *                    Use {@link Class} to refer to the type of the service.
-     * @param executedMgr The manager context where the service presence is checked.
-     *                    May be null if no specific manager is provided.
-     *                    Use {@link ISingleServiceManager} to define the manager context.
-     * @return True if the service exists deeply in the context of the provided manager.
-     * False otherwise.
-     */
-    boolean isExistsServiceDeeply(@NotNull Class<? extends U> service, @Nullable ISingleServiceManager<U> executedMgr);
 }
