@@ -1,4 +1,4 @@
-package org.akazukin.service.manager.single;
+package org.akazukin.service.manager.multi;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,8 +26,8 @@ import java.util.Objects;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ASingleServiceManager<U> implements ISingleServiceManager<U> {
-    public static final String EXCE_REGISTERED = "An service that associated is already registered; Interface:";
+public abstract class AMultiServiceManager<U> implements IMultiServiceManager<U> {
+    public static final String EXCE_REGISTERED = "An service that associated is already registered; Interface:%s, Implementation:%s";
 
     Collection<IServiceHolder<? extends U>> services = new HashSet<>();
     @Getter
@@ -39,7 +39,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
      * @param serviceType The class object representing the type of the service.
      *                    Must not be {@code null}.
      */
-    protected ASingleServiceManager(@NotNull final Class<U> serviceType) {
+    protected AMultiServiceManager(@NotNull final Class<U> serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -54,28 +54,28 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     }
 
     @Override
+    @Nullable
     @SuppressWarnings("unchecked")
-    public <U2 extends U> @Nullable U2 getServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
+    public <U2 extends U> U2[] getServicesByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
         synchronized (this.services) {
-            return (U2) this.services.stream()
+            return this.services.stream()
                     .filter(h ->
                             Objects.equals(h.getInterfaceClass(), serviceImpl)
                                     && Objects.equals(h.getImplementation().getClass(), service))
-                    .findFirst()
                     .map(IServiceHolder::getImplementation)
-                    .orElse(null);
+                    .toArray(ArrayUtils.collectToArray(service));
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U2 extends U> U2 getServiceByInterfaceClass(@NotNull final Class<U2> service) {
+    public <U2 extends U> U2[] getServicesByInterfaceClass(@NotNull final Class<U2> service) {
         synchronized (this.services) {
-            return (U2) this.services.stream()
+            return this.services.stream()
                     .filter(h ->
                             Objects.equals(h.getInterfaceClass(), service))
-                    .findFirst()
-                    .orElse(null);
+                    .map(IServiceHolder::getImplementation)
+                    .toArray(ArrayUtils.collectToArray(service));
         }
     }
 
@@ -99,12 +99,12 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U2 extends U> IServiceHolder<U2> getHolderByInterfaceClass(@NotNull final Class<U2> service) {
+    public <U2 extends U> IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull final Class<U2> service) {
         synchronized (this.services) {
-            return (IServiceHolder<U2>) this.services.stream()
+            return this.services.stream()
                     .filter(h -> Objects.equals(h.getInterfaceClass(), service))
-                    .findFirst()
-                    .orElse(null);
+                    .map(h -> (IServiceHolder<U2>) h)
+                    .toArray(ArrayUtils.collectToArray((Class<IServiceHolder<U2>>) (Object) IServiceHolder.class));
         }
     }
 
@@ -191,8 +191,8 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     @SuppressWarnings("unchecked")
     public synchronized void registerService(final @NotNull U serviceImpl) {
         synchronized (this.services) {
-            if (this.isExistsServiceByClass((Class<? extends U>) serviceImpl.getClass())) {
-                throw new IllegalStateException(EXCE_REGISTERED + serviceImpl.getClass().getName());
+            if (this.isExistsServiceByStruct((Class<U>) serviceImpl.getClass(), serviceImpl)) {
+                throw new IllegalStateException(String.format(EXCE_REGISTERED, serviceImpl.getClass().getName(), serviceImpl.getClass().getName()));
             }
             this.services.add(this.createHolder(serviceImpl));
         }
@@ -201,8 +201,8 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
     @Override
     public <U2 extends U> void registerService(@NotNull final Class<U2> service, @NotNull final U2 serviceImpl) {
         synchronized (this.services) {
-            if (this.isExistsServiceByClass(service)) {
-                throw new IllegalStateException(EXCE_REGISTERED + serviceImpl.getClass().getName());
+            if (this.isExistsServiceByStruct(service, serviceImpl)) {
+                throw new IllegalStateException(String.format(EXCE_REGISTERED, service.getName(), serviceImpl.getClass().getName()));
             }
             this.services.add(this.createHolder(service, serviceImpl));
         }

@@ -1,4 +1,4 @@
-package org.akazukin.service.manager.single;
+package org.akazukin.service.manager.multi;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * A base abstract class that provides the implementation of a service management system.
  * <p>
- * Extends the {@link ASingleServiceManager} with additional functionalities
+ * Extends the {@link AMultiServiceManager} with additional functionalities
  * for handling data linked with service holders.
  * <p>
  * The service manager is thread-safe and can be used in multithreaded environments.
@@ -22,8 +22,8 @@ import java.util.Objects;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public abstract class ACompoundSingleServiceManager<U, V>
-        extends ASingleServiceManager<U> implements ICompoundSingleServiceManager<U, V> {
+public abstract class ACompoundMultiServiceManager<U, V>
+        extends AMultiServiceManager<U> implements ICompoundMultiServiceManager<U, V> {
     Class<V> dataType;
 
     /**
@@ -37,7 +37,7 @@ public abstract class ACompoundSingleServiceManager<U, V>
      * @param dataType    The class object representing the type of data associated with the services.
      *                    Must not be {@code null}.
      */
-    protected ACompoundSingleServiceManager(final @NotNull Class<U> serviceType, @NotNull final Class<V> dataType) {
+    protected ACompoundMultiServiceManager(final @NotNull Class<U> serviceType, @NotNull final Class<V> dataType) {
         super(serviceType);
         this.dataType = dataType;
     }
@@ -60,6 +60,18 @@ public abstract class ACompoundSingleServiceManager<U, V>
                     .filter(s -> s instanceof ICompoundServiceHolder
                             && Objects.equals(s.getImplementation().getClass(), serviceImpl))
                     .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
+                    .toArray(ArrayUtils.collectToArray(this.dataType));
+        }
+    }
+
+    @Override
+    @NotNull
+    public V[] getDataByInterfaceClass(@NotNull final Class<? extends U> service) {
+        synchronized (this.services) {
+            return this.services.stream()
+                    .filter(h ->
+                            Objects.equals(h.getInterfaceClass(), service))
+                    .map(h -> ((ICompoundServiceHolder<? extends U, V>) h).getData())
                     .toArray(ArrayUtils.collectToArray(this.dataType));
         }
     }
