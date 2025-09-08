@@ -4,7 +4,7 @@ akz-util = "3.1.0"
 akz-annotation-marker = "1.1.0"
 lombok = "1.18.38"
 slf4j = "2.1.0-alpha1"
-jetbrains-annotation = "26.0.2"
+jetbrains-annotation = "26.0.2-1"
 
 #Test Modules
 junit-jupiter = "5.13.0-M3"
