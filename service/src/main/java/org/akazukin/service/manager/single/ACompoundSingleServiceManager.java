@@ -6,6 +6,7 @@ import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.ICompoundServiceHolder;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -61,6 +62,18 @@ public abstract class ACompoundSingleServiceManager<U, V>
                             && Objects.equals(s.getImplementation().getClass(), serviceImpl))
                     .map(s -> ((ICompoundServiceHolder<? extends U, V>) s).getData())
                     .toArray(ArrayUtils.collectToArray(this.dataType));
+        }
+    }
+
+    @Override
+    public @Nullable V getDataByInterfaceClass(@NotNull final Class<? extends U> service) {
+        synchronized (this.services) {
+            return this.services.stream()
+                    .filter(h -> h instanceof ICompoundServiceHolder
+                            && Objects.equals(h.getInterfaceClass(), service))
+                    .findFirst()
+                    .map(h -> ((ICompoundServiceHolder<? extends U, V>) h).getData())
+                    .orElse(null);
         }
     }
 
