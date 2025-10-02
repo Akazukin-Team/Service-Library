@@ -47,8 +47,8 @@ public abstract class AMultiServiceManager<U> implements IMultiServiceManager<U>
     public <U2 extends U> U2[] getServicesByClass(@NotNull final Class<U2> serviceImpl) {
         synchronized (this.services) {
             return this.services.stream()
+                    .filter(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl))
                     .map(IServiceHolder::getImplementation)
-                    .filter(s -> Objects.equals(s.getClass(), serviceImpl))
                     .toArray(ArrayUtils.collectToArray(serviceImpl));
         }
     }
@@ -124,8 +124,7 @@ public abstract class AMultiServiceManager<U> implements IMultiServiceManager<U>
         synchronized (this.services) {
             return this.services.toArray(
                     ArrayUtils.getNewArray(
-                            (Class<IServiceHolder<? extends U>>) (Object) IServiceHolder.class,
-                            0));
+                            (Class<IServiceHolder<? extends U>>) (Object) IServiceHolder.class, 0));
         }
     }
 
