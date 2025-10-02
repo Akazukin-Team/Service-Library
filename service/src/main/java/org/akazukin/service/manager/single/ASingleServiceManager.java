@@ -75,6 +75,7 @@ public abstract class ASingleServiceManager<U> implements ISingleServiceManager<
                     .filter(h ->
                             Objects.equals(h.getInterfaceClass(), service))
                     .findFirst()
+                    .map(IServiceHolder::getImplementation)
                     .orElse(null);
         }
     }
