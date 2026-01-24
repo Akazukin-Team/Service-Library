@@ -6,13 +6,18 @@ on:
     branches:
       - 'main'
       - 'master'
+      - 'product'
+      - 'prod'
+
+      - 'develop'
+      - 'dev'
 
 
 jobs:
   analyze:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip') }}
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
@@ -25,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache
         uses: actions/cache@v4

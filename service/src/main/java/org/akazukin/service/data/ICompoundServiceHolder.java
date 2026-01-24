@@ -6,9 +6,9 @@ import org.jetbrains.annotations.Nullable;
  * Represents a holder interface for managing a compound service that includes both
  * a service type and an additional data type.
  * <p>
- * This interface extends {@link IBlueprintedServiceHolder}, enabling type-safe access to
- * the implementation of the service as well as providing
- * methods for getting and setting supplementary data.
+ * This interface is designed to provide type-safe access to both
+ * the interface and the implementation of the service
+ * and provide methods for getting and setting supplementary data.
  *
  * @param <T> the type of the service
  * @param <U> the type of the additional data

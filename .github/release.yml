@@ -10,10 +10,17 @@ changelog:
       labels:
         - type/maintenance
         - type/refactor
+        - type/dependency
+    - title: 💽 Update runtime-related
+      labels:
         - type/runtime
+        - type/github
     - title: 📄 Improved documentation
       labels:
         - type/document
-    - title: 💣 Breaking Changes
+    - title: 💣 Breaking Changes (API)
       labels:
-        - type/breaking_changes
+        - breaking/api
+    - title: 💣 Breaking Changes (Implementation)
+      labels:
+        - breaking/implementation
