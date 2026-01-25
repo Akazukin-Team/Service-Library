@@ -92,6 +92,7 @@ public class SingleServiceManager<U> implements ISingleServiceManager<U> {
         return Arrays.stream(this.registry.getAllHolders())
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl))
                 .map(IServiceHolder::getImplementation)
+                .distinct()
                 .toArray(ArrayUtils.collectToArray(serviceImpl));
     }
 

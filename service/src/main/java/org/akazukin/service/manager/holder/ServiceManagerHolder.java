@@ -196,7 +196,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
                 }
             }
         }
-        return services.stream().distinct().toArray(ArrayUtils.collectToArray(this.serviceType));
+        return services.toArray(ArrayUtils.getNewArray(this.serviceType, 0));
     }
 
     @Override
@@ -213,7 +213,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
                 }
             }
         }
-        return holders.stream().distinct().toArray(ArrayUtils.collectToArray(IServiceHolder.class));
+        return holders.toArray(ArrayUtils.getNewArray(IServiceHolder.class, 0));
     }
 
     @Override

@@ -51,6 +51,7 @@ public class MultiServiceManager<U> implements IMultiServiceManager<U> {
                         Objects.equals(h.getInterfaceClass(), serviceImpl)
                                 && Objects.equals(h.getImplementation().getClass(), service))
                 .map(IServiceHolder::getImplementation)
+                .distinct()
                 .toArray(ArrayUtils.collectToArray(service));
     }
 
@@ -60,6 +61,7 @@ public class MultiServiceManager<U> implements IMultiServiceManager<U> {
                 .filter(h ->
                         Objects.equals(h.getInterfaceClass(), service))
                 .map(IServiceHolder::getImplementation)
+                .distinct()
                 .toArray(ArrayUtils.collectToArray(service));
     }
 
@@ -68,8 +70,7 @@ public class MultiServiceManager<U> implements IMultiServiceManager<U> {
     public <U2 extends U> IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull final Class<U2> service) {
         return Arrays.stream(this.registry.getAllHolders())
                 .filter(h -> Objects.equals(h.getInterfaceClass(), service))
-                .map(h -> (IServiceHolder<U2>) h)
-                .toArray(ArrayUtils.collectToArray((Class<IServiceHolder<U2>>) (Object) IServiceHolder.class));
+                .toArray(IServiceHolder[]::new);
     }
 
     @Override
@@ -89,6 +90,7 @@ public class MultiServiceManager<U> implements IMultiServiceManager<U> {
         return Arrays.stream(this.registry.getAllHolders())
                 .filter(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl))
                 .map(IServiceHolder::getImplementation)
+                .distinct()
                 .toArray(ArrayUtils.collectToArray(serviceImpl));
     }
 
