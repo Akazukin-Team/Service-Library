@@ -4,28 +4,29 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.service.data.IServiceHolder;
+import org.akazukin.service.manager.IServiceManager;
 import org.akazukin.service.manager.IServiceStore;
 import org.akazukin.service.manager.multi.IMultiServiceManager;
 import org.akazukin.service.manager.single.ISingleServiceManager;
 import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
-    public static final IServiceStore[] EMPTY_STORES = new IServiceStore[0];
+public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
+    public static final IServiceStore<?>[] EMPTY_STORES = new IServiceStore[0];
     Collection<IServiceStore<U>> stores = new HashSet<>();
 
     @Getter
     Class<U> serviceType;
 
-    public AServiceManagerHolder(final Class<U> serviceType) {
+    public ServiceManagerHolder(final Class<U> serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -44,13 +45,15 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public IServiceStore<U>[] getAllStores() {
-        return this.stores.toArray(EMPTY_STORES);
+        return (IServiceStore<U>[]) this.stores.toArray(EMPTY_STORES);
     }
 
     @Override
+    @NotNull
     @SuppressWarnings("unchecked")
-    public <U2 extends U> @Nullable U2[] getServicesByClass(@NotNull final Class<U2> serviceImpl) {
+    public <U2 extends U> U2[] getServicesByClass(@NotNull final Class<U2> serviceImpl) {
         final Collection<U2> services = new HashSet<>();
         synchronized (this.stores) {
             for (final IServiceStore<U> store : this.stores) {
@@ -70,8 +73,9 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
+    @NotNull
     @SuppressWarnings("unchecked")
-    public <U2 extends U> @Nullable U2[] getServicesByStructClass(@NotNull final Class<U2> service, @NotNull final Class<U2> serviceImpl) {
+    public <U2 extends U> U2[] getServicesByStructClass(@NotNull final Class<U2> service, @NotNull final Class<U2> serviceImpl) {
         final Collection<U2> services = new HashSet<>();
         synchronized (this.stores) {
             for (final IServiceStore<U> store : this.stores) {
@@ -92,7 +96,9 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    public <U2 extends U> @Nullable U2[] getServicesByInterfaceClass(@NotNull final Class<U2> service) {
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <U2 extends U> U2[] getServicesByInterfaceClass(@NotNull final Class<U2> service) {
         final Collection<U2> services = new HashSet<>();
         synchronized (this.stores) {
             for (final IServiceStore<U> store : this.stores) {
@@ -112,7 +118,8 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    @Nullable
+    @NotNull
+    @SuppressWarnings("unchecked")
     public IServiceHolder<? extends U>[] getHoldersByService(@NotNull final U serviceImpl) {
         final Collection<IServiceHolder<? extends U>> holders = new HashSet<>();
         synchronized (this.stores) {
@@ -133,7 +140,8 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    @Nullable
+    @NotNull
+    @SuppressWarnings("unchecked")
     public <U2 extends U> IServiceHolder<U2>[] getHoldersByClass(@NotNull final Class<? extends U2> serviceImpl) {
         final Collection<IServiceHolder<U2>> holders = new HashSet<>();
         synchronized (this.stores) {
@@ -154,7 +162,9 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    public <U2 extends U> @Nullable IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull final Class<U2> service) {
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <U2 extends U> IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull final Class<U2> service) {
         final Collection<IServiceHolder<U2>> holders = new HashSet<>();
         synchronized (this.stores) {
             for (final IServiceStore<U> store : this.stores) {
@@ -176,24 +186,34 @@ public class AServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @Override
     @NotNull
     public U[] getAllServices() {
+        final Collection<U> services = new HashSet<>();
         synchronized (this.stores) {
-            return this.stores.stream()
-                    .map(IServiceStore::getAllServices)
-                    .flatMap(Arrays::stream)
-                    .toArray(ArrayUtils.collectToArray(this.serviceType));
+            for (final IServiceStore<U> store : this.stores) {
+                if (store instanceof IServiceManager) {
+                    Collections.addAll(services, ((IServiceManager<U>) store).getRegistry().getAllServices());
+                } else {
+                    Collections.addAll(services, store.getAllServices());
+                }
+            }
         }
+        return services.stream().distinct().toArray(ArrayUtils.collectToArray(this.serviceType));
     }
 
     @Override
     @NotNull
     @SuppressWarnings("unchecked")
     public IServiceHolder<? extends U>[] getAllHolders() {
+        final Collection<IServiceHolder<U>> holders = new HashSet<>();
         synchronized (this.stores) {
-            return this.stores.stream()
-                    .map(IServiceStore::getAllHolders)
-                    .flatMap(Arrays::stream)
-                    .toArray(IServiceHolder[]::new);
+            for (final IServiceStore<U> store : this.stores) {
+                if (store instanceof IServiceManager) {
+                    Collections.addAll(holders, (IServiceHolder<U>[]) ((IServiceManager<U>) store).getRegistry().getAllHolders());
+                } else {
+                    Collections.addAll(holders, (IServiceHolder<U>[]) store.getAllHolders());
+                }
+            }
         }
+        return holders.stream().distinct().toArray(ArrayUtils.collectToArray(IServiceHolder.class));
     }
 
     @Override

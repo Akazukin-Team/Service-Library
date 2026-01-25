@@ -3,7 +3,6 @@ package org.akazukin.service.manager.holder;
 import org.akazukin.service.data.IServiceHolder;
 import org.akazukin.service.manager.IServiceStore;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The interface is responsible for managing service stores,
@@ -35,7 +34,7 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      * Each service store represents a collection of services or service holders.
      *
      * @return an array containing all instances of {@link IServiceStore}.
-     *         If no service stores are registered, an empty array is returned.
+     * If no service stores are registered, an empty array is returned.
      */
     @NotNull
     IServiceStore<? extends U>[] getAllStores();
@@ -45,9 +44,9 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      *
      * @param <U2>        the type of the service being retrieved, which must extend {@link U}
      * @param serviceImpl the class object representing the implementation of the service to be retrieved
-     * @return an array of service instances matching the specified implementation class, or {@code null} if no services are found
+     * @return an array of service instances matching the specified implementation class, or {@code []} if no services are found
      */
-    @Nullable
+    @NotNull
     <U2 extends U> U2[] getServicesByClass(@NotNull Class<U2> serviceImpl);
 
     /**
@@ -56,9 +55,9 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      * @param <U2>        the type of the service being retrieved, which must extend {@link U}
      * @param service     the class object representing the service interface to be retrieved
      * @param serviceImpl the class object representing the implementation of the service to be retrieved
-     * @return an array of service instances matching the specified service and implementation classes, or {@code null} if no services are found
+     * @return an array of service instances matching the specified service and implementation classes, or {@code []} if no services are found
      */
-    @Nullable
+    @NotNull
     <U2 extends U> U2[] getServicesByStructClass(@NotNull Class<U2> service, @NotNull Class<U2> serviceImpl);
 
     /**
@@ -66,9 +65,9 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      *
      * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
      * @param service the class object representing the interface of the service to be retrieved
-     * @return an array of service instances matching the specified interface type, or {@code null} if no services are found
+     * @return an array of service instances matching the specified interface type, or {@code []} if no services are found
      */
-    @Nullable
+    @NotNull
     <U2 extends U> U2[] getServicesByInterfaceClass(@NotNull Class<U2> service);
 
     /**
@@ -76,9 +75,9 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      *
      * @param serviceImpl the instance of the service for which the service holders are to be retrieved.
      *                    Must not be {@code null}.
-     * @return an array of service holders matching the specified service instance, or {@code null} if no service holders are found.
+     * @return an array of service holders matching the specified service instance, or {@code []} if no service holders are found.
      */
-    @Nullable
+    @NotNull
     IServiceHolder<? extends U>[] getHoldersByService(@NotNull U serviceImpl);
 
     /**
@@ -87,9 +86,9 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      * @param <U2>        the type of the service to be retrieved, which must extend {@link U}
      * @param serviceImpl the class object representing the implementation type of the service.
      *                    Must not be {@code null}.
-     * @return an array of service holders matching the specified implementation class, or {@code null} if no service holders are found.
+     * @return an array of service holders matching the specified implementation class, or {@code []} if no service holders are found.
      */
-    @Nullable
+    @NotNull
     <U2 extends U> IServiceHolder<U2>[] getHoldersByClass(@NotNull final Class<? extends U2> serviceImpl);
 
     /**
@@ -98,8 +97,8 @@ public interface IServiceManagerHolder<U> extends IServiceStore<U> {
      * @param <U2>    the type of the service to be retrieved, which must extend {@link U}
      * @param service the class object representing the interface type of the service.
      *                Must not be {@code null}.
-     * @return an array of service holders matching the specified interface type, or {@code null} if no service holders are found.
+     * @return an array of service holders matching the specified interface type, or {@code []} if no service holders are found.
      */
-    @Nullable
+    @NotNull
     <U2 extends U> IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull Class<U2> service);
 }
