@@ -10,13 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IServiceStore<U> {
     /**
-     * Retrieves the service type managed by this store.
-     *
-     * @return the class object representing the service type.
-     */
-    Class<U> getServiceType();
-
-    /**
      * Retrieves an array of all registered service instances.
      *
      * @return an array of all services currently registered, or an empty array if no services are registered.

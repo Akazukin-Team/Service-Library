@@ -25,7 +25,6 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public class MultiServiceManager<U> implements IMultiServiceManager<U> {
-    @Getter
     Class<U> serviceType;
     @Getter
     IServiceRegistry<U> registry;

@@ -1,7 +1,6 @@
 package org.akazukin.service.manager.holder;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.service.data.IServiceHolder;
 import org.akazukin.service.manager.IServiceManager;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     public static final IServiceStore<?>[] EMPTY_STORES = new IServiceStore[0];
     Collection<IServiceStore<U>> stores = new HashSet<>();
-
-    @Getter
     Class<U> serviceType;
 
     public ServiceManagerHolder(final Class<U> serviceType) {

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
  * @param <U> the type of the service managed by the service holder.
  */
 public interface ISingleServiceManager<U> extends IServiceManager<U> {
-
     /**
      * Retrieves a registered service by its specific implementation class.
      *
