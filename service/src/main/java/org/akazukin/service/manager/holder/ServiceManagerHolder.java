@@ -28,22 +28,18 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    public void registerStore(final @NotNull IServiceStore<U> store) {
-        synchronized (this.stores) {
-            this.stores.add(store);
-        }
+    public synchronized void registerStore(final @NotNull IServiceStore<U> store) {
+        this.stores.add(store);
     }
 
     @Override
-    public void unregisterStore(final @NotNull IServiceStore<U> store) {
-        synchronized (this.stores) {
-            this.stores.remove(store);
-        }
+    public synchronized void unregisterStore(final @NotNull IServiceStore<U> store) {
+        this.stores.remove(store);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public IServiceStore<U>[] getAllStores() {
+    public synchronized IServiceStore<U>[] getAllStores() {
         return (IServiceStore<U>[]) this.stores.toArray(EMPTY_STORES);
     }
 
@@ -52,7 +48,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public <U2 extends U> U2[] getServicesByClass(@NotNull final Class<U2> serviceImpl) {
         final Collection<U2> services = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     services.addAll(Arrays.asList(((ISingleServiceManager<U>) store).getServicesByClass(serviceImpl)));
@@ -74,7 +70,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public <U2 extends U> U2[] getServicesByStructClass(@NotNull final Class<U2> service, @NotNull final Class<U2> serviceImpl) {
         final Collection<U2> services = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     services.add(((ISingleServiceManager<U>) store).getServiceByStructClass(service, serviceImpl));
@@ -97,7 +93,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public <U2 extends U> U2[] getServicesByInterfaceClass(@NotNull final Class<U2> service) {
         final Collection<U2> services = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     services.add(((ISingleServiceManager<U>) store).getServiceByInterfaceClass(service));
@@ -119,7 +115,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public IServiceHolder<? extends U>[] getHoldersByService(@NotNull final U serviceImpl) {
         final Collection<IServiceHolder<? extends U>> holders = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     holders.addAll(Arrays.asList(((ISingleServiceManager<U>) store).getHoldersByService(serviceImpl)));
@@ -141,7 +137,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public <U2 extends U> IServiceHolder<U2>[] getHoldersByClass(@NotNull final Class<? extends U2> serviceImpl) {
         final Collection<IServiceHolder<U2>> holders = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     holders.addAll(Arrays.asList(((ISingleServiceManager<U2>) store).getHoldersByClass(serviceImpl)));
@@ -163,7 +159,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public <U2 extends U> IServiceHolder<U2>[] getHoldersByInterfaceClass(@NotNull final Class<U2> service) {
         final Collection<IServiceHolder<U2>> holders = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof ISingleServiceManager) {
                     holders.add(((ISingleServiceManager<U2>) store).getHolderByInterfaceClass(service));
@@ -184,7 +180,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @NotNull
     public U[] getAllServices() {
         final Collection<U> services = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof IServiceManager) {
                     Collections.addAll(services, ((IServiceManager<U>) store).getRegistry().getAllServices());
@@ -201,7 +197,7 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     @SuppressWarnings("unchecked")
     public IServiceHolder<? extends U>[] getAllHolders() {
         final Collection<IServiceHolder<U>> holders = new HashSet<>();
-        synchronized (this.stores) {
+        synchronized (this) {
             for (final IServiceStore<U> store : this.stores) {
                 if (store instanceof IServiceManager) {
                     Collections.addAll(holders, (IServiceHolder<U>[]) ((IServiceManager<U>) store).getRegistry().getAllHolders());
@@ -214,42 +210,32 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    public boolean isExistsService(@NotNull final U service) {
-        synchronized (this.stores) {
-            return this.stores.stream()
-                    .anyMatch(s -> s.isExistsService(service));
-        }
+    public synchronized boolean isExistsService(@NotNull final U service) {
+        return this.stores.stream()
+                .anyMatch(s -> s.isExistsService(service));
     }
 
     @Override
-    public boolean isExistsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
-        synchronized (this.stores) {
-            return this.stores.stream()
-                    .anyMatch(s -> s.isExistsServiceByClass(serviceImpl));
-        }
+    public synchronized boolean isExistsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
+        return this.stores.stream()
+                .anyMatch(s -> s.isExistsServiceByClass(serviceImpl));
     }
 
     @Override
-    public boolean isExistsServiceByInterface(@NotNull final Class<? extends U> service) {
-        synchronized (this.stores) {
-            return this.stores.stream()
-                    .anyMatch(s -> s.isExistsServiceByInterface(service));
-        }
+    public synchronized boolean isExistsServiceByInterface(@NotNull final Class<? extends U> service) {
+        return this.stores.stream()
+                .anyMatch(s -> s.isExistsServiceByInterface(service));
     }
 
     @Override
-    public <U2 extends U> boolean isExistsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
-        synchronized (this.stores) {
-            return this.stores.stream()
-                    .anyMatch(s -> s.isExistsServiceByStructClass(service, serviceImpl));
-        }
+    public synchronized <U2 extends U> boolean isExistsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
+        return this.stores.stream()
+                .anyMatch(s -> s.isExistsServiceByStructClass(service, serviceImpl));
     }
 
     @Override
-    public <U2 extends U> boolean isExistsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
-        synchronized (this.stores) {
-            return this.stores.stream()
-                    .anyMatch(s -> s.isExistsServiceByStruct(service, serviceImpl));
-        }
+    public synchronized <U2 extends U> boolean isExistsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
+        return this.stores.stream()
+                .anyMatch(s -> s.isExistsServiceByStruct(service, serviceImpl));
     }
 }
