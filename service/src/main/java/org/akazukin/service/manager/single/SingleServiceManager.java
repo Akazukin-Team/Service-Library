@@ -25,10 +25,9 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public class SingleServiceManager<U> implements ISingleServiceManager<U> {
+    Class<U> serviceType;
     @Getter
     IServiceRegistry<U> registry;
-    @Getter
-    Class<U> serviceType;
 
     /**
      * Constructs an instance of ASingleServiceManager with the specified service type.

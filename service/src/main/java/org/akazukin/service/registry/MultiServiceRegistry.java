@@ -1,7 +1,6 @@
 package org.akazukin.service.registry;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.service.data.BlueprintedServiceHolder;
 import org.akazukin.service.data.IServiceHolder;
@@ -17,7 +16,6 @@ import java.util.Set;
 public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     public static final String EX_EXISTS = "The service already registered";
     Set<IServiceHolder<? extends U>> holders = new HashSet<>();
-    @Getter
     Class<U> serviceType;
 
     protected MultiServiceRegistry(@NotNull final Class<U> serviceType) {
