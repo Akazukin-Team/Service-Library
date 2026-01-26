@@ -20,7 +20,7 @@ public interface IServiceStore<U> {
      * Retrieves an array of all registered service instances.
      *
      * @return an array of all services currently registered, or an empty array if no services are registered.
-     *         Must not be {@code null}.
+     * Must not be {@code null}.
      */
     @NotNull
     U[] getAllServices();
@@ -29,7 +29,7 @@ public interface IServiceStore<U> {
      * Retrieves an array of all service holders that contain the registered services.
      *
      * @return an array of all service holders currently registered, or an empty array if no services are registered.
-     *         Must not be {@code null}.
+     * Must not be {@code null}.
      */
     @NotNull
     IServiceHolder<? extends U>[] getAllHolders();
@@ -40,7 +40,7 @@ public interface IServiceStore<U> {
      * @param service the service instance to check.
      *                Must not be {@code null}.
      * @return {@code true} if a service implementation of the specified type is registered.
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean isExistsService(@NotNull U service);
 
@@ -50,7 +50,7 @@ public interface IServiceStore<U> {
      * @param serviceImpl the class object representing the implementation type of the service.
      *                    Must not be {@code null}.
      * @return {@code true} if a service implementation of the specified type is registered.
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean isExistsServiceByClass(@NotNull Class<? extends U> serviceImpl);
 
@@ -60,7 +60,7 @@ public interface IServiceStore<U> {
      * @param service the class object representing the interface type of the service.
      *                Must not be {@code null}.
      * @return {@code true} if a service implementation of the specified type is registered.
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean isExistsServiceByInterface(@NotNull Class<? extends U> service);
 
@@ -73,7 +73,7 @@ public interface IServiceStore<U> {
      * @param serviceImpl the class object representing the implementation type of the service.
      *                    Must not be {@code null}.
      * @return {@code true} if a service implementation of the specified type is registered.
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     <U2 extends U> boolean isExistsServiceByStructClass(@NotNull Class<U2> service, @NotNull Class<? extends U2> serviceImpl);
 
@@ -86,7 +86,7 @@ public interface IServiceStore<U> {
      * @param serviceImpl the service instance to check.
      *                    Must not be {@code null}.
      * @return {@code true} if a service implementation of the specified type is registered.
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     <U2 extends U> boolean isExistsServiceByStruct(@NotNull Class<? super U2> service, @NotNull U2 serviceImpl);
 }
