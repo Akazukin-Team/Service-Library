@@ -25,20 +25,16 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
 public class SingleServiceManager<U> extends ServiceManager<U> implements ISingleServiceManager<U> {
-    Class<U> serviceType;
     @Getter
     IServiceRegistry<U> registry;
 
     /**
      * Constructs an instance of ASingleServiceManager with the specified service type.
      *
-     * @param serviceType The class object representing the type of the service.
-     *                    Must not be {@code null}.
-     * @param registry    The service registry to be used by this manager.
-     *                    Must not be {@code null}.
+     * @param registry The service registry to be used by this manager.
+     *                 Must not be {@code null}.
      */
-    public SingleServiceManager(@NotNull final Class<U> serviceType, @NotNull final IServiceRegistry<U> registry) {
-        this.serviceType = serviceType;
+    public SingleServiceManager(@NotNull final IServiceRegistry<U> registry) {
         this.registry = registry;
     }
 
