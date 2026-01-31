@@ -10,7 +10,7 @@ public class SingleServiceRegistry<U> extends MultiServiceRegistry<U> {
 
     @Override
     public synchronized void registerService(final @NotNull IServiceHolder<? extends U> holder) {
-        if (this.isExistsServiceByInterface((Class<? extends U>) holder.getInterfaceClass())) {
+        if (this.containsServiceByInterface((Class<? extends U>) holder.getInterfaceClass())) {
             throw new IllegalStateException(String.format(MultiServiceRegistry.EX_EXISTS + "; interface: %s",
                     holder.getInterfaceClass().getName()));
         }

@@ -35,7 +35,7 @@ public interface IServiceStore<U> {
      * @return {@code true} if a service implementation of the specified type is registered.
      * {@code false} otherwise.
      */
-    boolean isExistsService(@NotNull U service);
+    boolean containsService(@NotNull U service);
 
     /**
      * Checks if a service is registered for the specified implementation class.
@@ -45,7 +45,7 @@ public interface IServiceStore<U> {
      * @return {@code true} if a service implementation of the specified type is registered.
      * {@code false} otherwise.
      */
-    boolean isExistsServiceByClass(@NotNull Class<? extends U> serviceImpl);
+    boolean containsServiceByClass(@NotNull Class<? extends U> serviceImpl);
 
     /**
      * Checks if a service is registered for the specified interface class.
@@ -55,7 +55,7 @@ public interface IServiceStore<U> {
      * @return {@code true} if a service implementation of the specified type is registered.
      * {@code false} otherwise.
      */
-    boolean isExistsServiceByInterface(@NotNull Class<? extends U> service);
+    boolean containsServiceByInterface(@NotNull Class<? extends U> service);
 
     /**
      * Checks if a service is registered for the specified interface and implementation classes.
@@ -68,7 +68,7 @@ public interface IServiceStore<U> {
      * @return {@code true} if a service implementation of the specified type is registered.
      * {@code false} otherwise.
      */
-    <U2 extends U> boolean isExistsServiceByStructClass(@NotNull Class<U2> service, @NotNull Class<? extends U2> serviceImpl);
+    <U2 extends U> boolean containsServiceByStructClass(@NotNull Class<U2> service, @NotNull Class<? extends U2> serviceImpl);
 
     /**
      * Checks if a service is registered for the specified interface and service instance.
@@ -81,5 +81,5 @@ public interface IServiceStore<U> {
      * @return {@code true} if a service implementation of the specified type is registered.
      * {@code false} otherwise.
      */
-    <U2 extends U> boolean isExistsServiceByStruct(@NotNull Class<? super U2> service, @NotNull U2 serviceImpl);
+    <U2 extends U> boolean containsServiceByStruct(@NotNull Class<? super U2> service, @NotNull U2 serviceImpl);
 }

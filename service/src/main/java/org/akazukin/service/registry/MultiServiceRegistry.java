@@ -34,7 +34,7 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
 
     @Override
     public synchronized void registerService(@NotNull final IServiceHolder<? extends U> holder) {
-        if (this.isExistsServiceByStruct((Class<U>) holder.getInterfaceClass(), holder.getImplementation())) {
+        if (this.containsServiceByStruct((Class<U>) holder.getInterfaceClass(), holder.getImplementation())) {
             throw new IllegalStateException(String.format(EX_EXISTS + "; impl: %s, interface: %s",
                     holder.getImplementation().getClass().getName(), holder.getInterfaceClass().getName()));
         }
@@ -89,25 +89,25 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     }
 
     @Override
-    public synchronized boolean isExistsService(@NotNull final U service) {
+    public synchronized boolean containsService(@NotNull final U service) {
         return this.holders.stream()
                 .anyMatch(h -> h.getImplementation() == service);
     }
 
     @Override
-    public synchronized boolean isExistsServiceByClass(final @NotNull Class<? extends U> serviceImpl) {
+    public synchronized boolean containsServiceByClass(final @NotNull Class<? extends U> serviceImpl) {
         return this.holders.stream()
                 .anyMatch(h -> Objects.equals(h.getInterfaceClass(), serviceImpl));
     }
 
     @Override
-    public synchronized boolean isExistsServiceByInterface(@NotNull final Class<? extends U> service) {
+    public synchronized boolean containsServiceByInterface(@NotNull final Class<? extends U> service) {
         return this.holders.stream()
                 .anyMatch(h -> Objects.equals(h.getInterfaceClass(), service));
     }
 
     @Override
-    public synchronized <U2 extends U> boolean isExistsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
+    public synchronized <U2 extends U> boolean containsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
         return this.holders.stream()
                 .anyMatch(h ->
                         Objects.equals(h.getImplementation().getClass(), serviceImpl)
@@ -115,7 +115,7 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     }
 
     @Override
-    public synchronized <U2 extends U> boolean isExistsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
+    public synchronized <U2 extends U> boolean containsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
         return this.holders.stream()
                 .anyMatch(h ->
                         h.getImplementation() == serviceImpl
