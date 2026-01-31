@@ -210,32 +210,32 @@ public class ServiceManagerHolder<U> implements IServiceManagerHolder<U> {
     }
 
     @Override
-    public synchronized boolean isExistsService(@NotNull final U service) {
+    public synchronized boolean containsService(@NotNull final U service) {
         return this.stores.stream()
-                .anyMatch(s -> s.isExistsService(service));
+                .anyMatch(s -> s.containsService(service));
     }
 
     @Override
-    public synchronized boolean isExistsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
+    public synchronized boolean containsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
         return this.stores.stream()
-                .anyMatch(s -> s.isExistsServiceByClass(serviceImpl));
+                .anyMatch(s -> s.containsServiceByClass(serviceImpl));
     }
 
     @Override
-    public synchronized boolean isExistsServiceByInterface(@NotNull final Class<? extends U> service) {
+    public synchronized boolean containsServiceByInterface(@NotNull final Class<? extends U> service) {
         return this.stores.stream()
-                .anyMatch(s -> s.isExistsServiceByInterface(service));
+                .anyMatch(s -> s.containsServiceByInterface(service));
     }
 
     @Override
-    public synchronized <U2 extends U> boolean isExistsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
+    public synchronized <U2 extends U> boolean containsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
         return this.stores.stream()
-                .anyMatch(s -> s.isExistsServiceByStructClass(service, serviceImpl));
+                .anyMatch(s -> s.containsServiceByStructClass(service, serviceImpl));
     }
 
     @Override
-    public synchronized <U2 extends U> boolean isExistsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
+    public synchronized <U2 extends U> boolean containsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
         return this.stores.stream()
-                .anyMatch(s -> s.isExistsServiceByStruct(service, serviceImpl));
+                .anyMatch(s -> s.containsServiceByStruct(service, serviceImpl));
     }
 }

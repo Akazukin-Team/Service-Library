@@ -122,27 +122,27 @@ public class SingleServiceManager<U> implements ISingleServiceManager<U> {
     }
 
     @Override
-    public boolean isExistsService(@NotNull final U service) {
-        return this.registry.isExistsService(service);
+    public boolean containsService(@NotNull final U service) {
+        return this.registry.containsService(service);
     }
 
     @Override
-    public boolean isExistsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
-        return this.registry.isExistsServiceByClass(serviceImpl);
+    public boolean containsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
+        return this.registry.containsServiceByClass(serviceImpl);
     }
 
     @Override
-    public boolean isExistsServiceByInterface(@NotNull final Class<? extends U> service) {
-        return this.registry.isExistsServiceByInterface(service);
+    public boolean containsServiceByInterface(@NotNull final Class<? extends U> service) {
+        return this.registry.containsServiceByInterface(service);
     }
 
     @Override
-    public <U2 extends U> boolean isExistsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
-        return this.registry.isExistsServiceByStructClass(service, serviceImpl);
+    public <U2 extends U> boolean containsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
+        return this.registry.containsServiceByStructClass(service, serviceImpl);
     }
 
     @Override
-    public <U2 extends U> boolean isExistsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
-        return this.registry.isExistsServiceByStruct(service, serviceImpl);
+    public <U2 extends U> boolean containsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
+        return this.registry.containsServiceByStruct(service, serviceImpl);
     }
 }
