@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.akazukin.annotation.marker.ThreadSafe;
 import org.akazukin.service.data.IServiceHolder;
+import org.akazukin.service.manager.ServiceManager;
 import org.akazukin.service.registry.IServiceRegistry;
-import org.akazukin.util.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @ThreadSafe
-public class SingleServiceManager<U> implements ISingleServiceManager<U> {
+public class SingleServiceManager<U> extends ServiceManager<U> implements ISingleServiceManager<U> {
     Class<U> serviceType;
     @Getter
     IServiceRegistry<U> registry;
@@ -72,77 +72,5 @@ public class SingleServiceManager<U> implements ISingleServiceManager<U> {
                 .filter(h -> Objects.equals(h.getInterfaceClass(), service))
                 .findFirst()
                 .orElse(null);
-    }
-
-    @Override
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public <U2 extends U> IServiceHolder<U2> getHolderByStruct(@NotNull final Class<U2> service, @NotNull final U2 serviceImpl) {
-        return (IServiceHolder<U2>) Arrays.stream(this.registry.getAllHolders())
-                .filter(h ->
-                        h.getImplementation() == serviceImpl
-                                && Objects.equals(h.getInterfaceClass(), service))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public <U2 extends U> U2[] getServicesByClass(@NotNull final Class<U2> serviceImpl) {
-        return Arrays.stream(this.registry.getAllHolders())
-                .filter(s -> Objects.equals(s.getImplementation().getClass(), serviceImpl))
-                .map(IServiceHolder::getImplementation)
-                .distinct()
-                .toArray(ArrayUtils.collectToArray(serviceImpl));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public IServiceHolder<? extends U>[] getHoldersByService(@NotNull final U serviceImpl) {
-        return Arrays.stream(this.registry.getAllHolders())
-                .filter(h -> h.getImplementation() == serviceImpl)
-                .toArray(ArrayUtils.collectToArray(IServiceHolder.class));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <U2 extends U> IServiceHolder<U2>[] getHoldersByClass(@NotNull final Class<? extends U2> serviceImpl) {
-        return Arrays.stream(this.registry.getAllHolders())
-                .filter(h -> Objects.equals(h.getImplementation().getClass(), serviceImpl))
-                .toArray(ArrayUtils.collectToArray(IServiceHolder.class));
-    }
-
-    @Override
-    public @NotNull U[] getAllServices() {
-        return this.registry.getAllServices();
-    }
-
-    @Override
-    public @NotNull IServiceHolder<? extends U>[] getAllHolders() {
-        return this.registry.getAllHolders();
-    }
-
-    @Override
-    public boolean containsService(@NotNull final U service) {
-        return this.registry.containsService(service);
-    }
-
-    @Override
-    public boolean containsServiceByClass(@NotNull final Class<? extends U> serviceImpl) {
-        return this.registry.containsServiceByClass(serviceImpl);
-    }
-
-    @Override
-    public boolean containsServiceByInterface(@NotNull final Class<? extends U> service) {
-        return this.registry.containsServiceByInterface(service);
-    }
-
-    @Override
-    public <U2 extends U> boolean containsServiceByStructClass(@NotNull final Class<U2> service, @NotNull final Class<? extends U2> serviceImpl) {
-        return this.registry.containsServiceByStructClass(service, serviceImpl);
-    }
-
-    @Override
-    public <U2 extends U> boolean containsServiceByStruct(@NotNull final Class<? super U2> service, @NotNull final U2 serviceImpl) {
-        return this.registry.containsServiceByStruct(service, serviceImpl);
     }
 }
