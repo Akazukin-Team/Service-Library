@@ -33,6 +33,7 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized void registerService(@NotNull final IServiceHolder<? extends U> holder) {
         if (this.containsServiceByStruct((Class<U>) holder.getInterfaceClass(), holder.getImplementation())) {
             throw new IllegalStateException(String.format(EX_EXISTS + "; impl: %s, interface: %s",
@@ -84,6 +85,7 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized @NotNull IServiceHolder<? extends U>[] getAllHolders() {
         return this.holders.toArray(new IServiceHolder[0]);
     }
