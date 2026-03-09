@@ -9,6 +9,7 @@ public class SingleServiceRegistry<U> extends MultiServiceRegistry<U> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized void registerService(final @NotNull IServiceHolder<? extends U> holder) {
         if (this.containsServiceByInterface((Class<? extends U>) holder.getInterfaceClass())) {
             throw new IllegalStateException(String.format(MultiServiceRegistry.EX_EXISTS + "; interface: %s",
