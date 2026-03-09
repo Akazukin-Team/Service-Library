@@ -33,7 +33,7 @@ A library providing manager for many similar services.
 
 Make sure you have the following installed:
 
-- **Java Development Kit (JDK)** version 8 or later.
+- **Java Development Kit (JDK)** version 17 or later.
 
 ---
 
