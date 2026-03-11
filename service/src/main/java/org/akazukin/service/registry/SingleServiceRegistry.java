@@ -4,7 +4,7 @@ import org.akazukin.service.data.IServiceHolder;
 import org.jetbrains.annotations.NotNull;
 
 public class SingleServiceRegistry<U> extends MultiServiceRegistry<U> {
-    protected SingleServiceRegistry(final @NotNull Class<U> serviceType) {
+    public SingleServiceRegistry(final @NotNull Class<U> serviceType) {
         super(serviceType);
     }
 

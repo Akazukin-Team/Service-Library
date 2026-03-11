@@ -18,7 +18,7 @@ public class MultiServiceRegistry<U> implements IServiceRegistry<U> {
     Set<IServiceHolder<? extends U>> holders = new HashSet<>();
     Class<U> serviceType;
 
-    protected MultiServiceRegistry(@NotNull final Class<U> serviceType) {
+    public MultiServiceRegistry(@NotNull final Class<U> serviceType) {
         this.serviceType = serviceType;
     }
 
